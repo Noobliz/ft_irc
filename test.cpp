@@ -40,7 +40,12 @@ int	main(int ac, char **av)
 		struct pollfd pfd[MAX_CLIENT + 1];
 
 		nfds_t nb_fds = 1;
-		pfd[0] = {sockFd, POLLIN, 0};
+		//pfd[0] = {sockFd, POLLIN, 0}; NE COMPILE PAS (FLAG C++98)
+		pfd[0].fd = sockFd;
+		pfd[0].events = POLLIN;
+		pfd[0].revents = 0;
+
+
 
 		while (1)
 		{
