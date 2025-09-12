@@ -31,7 +31,11 @@ int	main(int ac, char **av)
 		int opt = 1;
 		setsockopt(sockFd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
 
-		bind(sockFd, (struct sockaddr *)&addr, sizeof(addr));
+		if (bind(sockFd, (struct sockaddr *)&addr, sizeof(addr)) == -1)
+		{
+			std::cout << "coucou je suis bind qui echoue" << std::endl;
+			return 1;
+		}
 
 		socklen_t client_len = sizeof(addr);
 
@@ -70,11 +74,11 @@ int	main(int ac, char **av)
 			{
 				// nfds_t nb_fds = clientFds.size();
 				// poll(&(*ite), nb_fds, 0);
-				
+
 				buff = "your message longer than 10 :";
 				if (pfd[i].revents == POLLIN)
 				{
-	
+
 					//send(clientFd, buff.c_str(), buff.size(), 0);
 					char *buffer2 = (char *)calloc(10, 1);
 					recv(pfd[i].fd, buffer2, 10, 0);
