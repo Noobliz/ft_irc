@@ -78,20 +78,39 @@ void	Server::run(void)
 				if (_events[i].events & EPOLLIN)
 				{
 					char *buffer2 = (char *)calloc(10, 1);
-					recv(_events[i].data.fd, buffer2, 10, 0);
-					if (buffer2[0] != 0)
-						std::cout << "buffer 2 = " << buffer2 << std::endl;
-					free(buffer2);
+					size_t r = recv(_events[i].data.fd, buffer2, 10, 0);
+					if (r == 0)
+					{
+						std::cout << "client fermax" << std::endl;
+						close(_events[i].data.fd);
+					}
+					else if (r > 0)
+					{
+						if (buffer2[0] != 0)
+							std::cout << "buffer 2 = " << buffer2 << std::endl;
+						free(buffer2);
+					}
+					else
+						throw std::invalid_argument("Error: recv fail");
 
-				}
-				if (_events[i].events & EPOLLOUT)
-				{
-					if (send(_events[i].data.fd, (void *)"j'ai bien recu ton message merci\n\0", 35, 0) == -1)
+					size_t s = send(_events[i].data.fd, (void *)"j'ai bien recu ton message merci\n\0", 35, 0);
+
+					if (s == 0)
 					{
 						std::cout << "propre" << std::endl;
 					}
+					else if (s > 0)
+					{
+						std::cout << "retour ok" << std::endl;
+					}
+					else
+					{
+						//ici on peut modifier les events pour unlock EPOLLOUT et donc attendre que le buffer soit OK apparemment
+					}
+
 				}
-				if (_events[i].events & (EPOLLHUP | EPOLLERR))
+
+				if (_events[i].events & (EPOLLHUP | EPOLLRDHUP | EPOLLERR))
 				{
 					std::cout << "the client number " << _events[i].data.fd << " has been disconnected." << std::endl;
 				}
