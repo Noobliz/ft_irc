@@ -1,0 +1,16 @@
+| Server class
+	-> on Construction : setup mandatories
+		-> throw on fail
+	-> method "run" that launch the infinite while
+
+| Client class
+	-> to stock infos by socket_fd
+	-> channels : une liste ?
+
+| main()
+	-> parse port / params
+	-> run server and catch exceptions thrown
+
+---
+-> map de commande ? (NOM DE LA COMMANDE, fonction de la commande)
+---

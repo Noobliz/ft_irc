@@ -3,8 +3,9 @@ CXXFLAGS = -Wall -Wextra -Werror -std=c++98 -g
 
 NAME = ircserv
 
-SRC =   test.cpp \
-
+SRC =	main.cpp		\
+		src/Server.cpp	\
+		src/Client.cpp	\
 
 OBJDIR = .obj/
 OBJ = $(addprefix $(OBJDIR),$(SRC:.cpp=.o))
@@ -14,10 +15,9 @@ all : $(NAME)
 $(NAME): $(OBJ)
 	$(CXX) $(CXXFLAGS) $^ -o $@
 
-
 $(OBJDIR)%.o : %.cpp
 	@mkdir -p $(@D)
-	$(CXX) $(CXXFLAGS) -c $< -o $@
+	$(CXX) $(CXXFLAGS) -c $< -Iinc -o $@
 
 clean :
 	rm -rf $(OBJDIR)
