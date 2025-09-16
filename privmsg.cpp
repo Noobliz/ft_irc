@@ -2,6 +2,12 @@
 #include "inc/Client.hpp"
 #include <vector>
 
+class Channel{
+	private:
+
+	public:
+		std::vector<Client> clientsList;
+};
 
 std::map<std::string, Client> clients;
 
@@ -12,7 +18,7 @@ std::map<std::string, Channel> channels;
 void	privateMsg(std::vector<std::string> nick, std::string msg)
 {
 	typename std::map<std::string, Client>::iterator ite;
-	typename std::map<std::string, Client>::iterator ite2;
+	typename std::map<std::string, Channel>::iterator ite2;
 
 	for(int i = 0; i < nick.size(); i++)
 	{
@@ -24,14 +30,19 @@ void	privateMsg(std::vector<std::string> nick, std::string msg)
 		}
 		else if (ite2 != channels.end())
 		{
-			for (int i = 0; i < (*ite2).clientList.size(), i++)
+			std::string index = (*ite2).first;
+			for (int i = 0; i < (*ite2).second.clientsList.size() / channels[index].clientsList.size(); i++)
 			{
-				send(clientList[i].getFd(), msg);
+				send(channels[index].clientsList[i].getFD(), msg);
 			}
 		}
 		else
 		{
-			//Error : chan or client not found
+		// 	ERR_NORECIPIENT                 ERR_NOTEXTTOSEND
+        //    ERR_CANNOTSENDTOCHAN            ERR_NOTOPLEVEL
+        //    ERR_WILDTOPLEVEL                ERR_TOOMANYTARGETS
+        //    ERR_NOSUCHNICK
+        //    RPL_AWAY
 		}
 	}
 	
