@@ -14,3 +14,31 @@
 ---
 -> map de commande ? (NOM DE LA COMMANDE, fonction de la commande)
 ---
+
+auth:
+PASS
+Parameters: <password>
+
+NICK:
+Parameters: <nickname> [ <hopcount> ]
+
+USER
+Parameters: <username> <hostname> <servername> <realname>
+
+JOIN
+Parameters: <channel>{,<channel>} [<key>{,<key>}]
+
+PRIVMSG
+Parameters: <receiver>{,<receiver>} <text to be sent>
+
+KICK
+Parameters: <channel> <user> [<comment>]
+
+INVITE
+Parameters: <nickname> <channel>
+
+TOPIC
+Parameters: <channel> [<topic>]
+
+MODE
+Parameters: <channel> {[+|-]|i|t|k|o|l} [<limit>] [<user>] [<ban mask>]
