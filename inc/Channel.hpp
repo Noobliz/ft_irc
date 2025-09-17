@@ -21,8 +21,14 @@ class Channel
 		bool		isInInviteMode(void);
 		void		setInviteMode(bool const & im);
 
+		bool		isTopicForAll(void);
+		void		setTopicForAll(bool const & tfa);
+
 		std::string	getName(void) const;
 		void		setName(std::string const & name);
+
+		std::string	getTopic(void) const;
+		void		setTopic(std::string const & topic);
 
 		std::string	getPassword(void) const;
 		void		setPassword(std::string const & pass);
@@ -41,7 +47,9 @@ class Channel
 		Channel(Channel & copy);
 
 		std::string						_name;
+		std::string						_topic;
 		bool							_inviteMode;
+		bool							_topicForAll;
 		std::string						_password;
 		int								_userLimit;
 

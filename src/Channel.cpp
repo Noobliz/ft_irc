@@ -46,6 +46,16 @@ void		Channel::setInviteMode(bool const & im)
 	_inviteMode = im;
 }
 
+bool		Channel::isTopicForAll(void)
+{
+	return _topicForAll;
+}
+
+void		Channel::setTopicForAll(bool const & tfa)
+{
+	_topicForAll = tfa;
+}
+
 std::string	Channel::getName(void) const
 {
 	return _name;
@@ -53,6 +63,16 @@ std::string	Channel::getName(void) const
 void		Channel::setName(std::string const & name)
 {
 	_name = name;
+}
+
+std::string	Channel::getTopic(void) const
+{
+	return _topic;
+}
+
+void		Channel::setTopic(std::string const & topic)
+{
+	_topic = topic;
 }
 
 std::string	Channel::getPassword(void) const
