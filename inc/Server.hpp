@@ -9,6 +9,8 @@
 #include <sys/epoll.h>
 #include <stdexcept>
 #include <Client.hpp>
+#include <Channel.hpp>
+#include <map>
 
 # define MAX_CLIENT 1024
 # define MAX_EVENTS 256
@@ -34,5 +36,9 @@ class Server
 		struct sockaddr_in	_addr;
 		struct epoll_event	_events[MAX_EVENTS];
 		struct epoll_event	_ev;
+
+		std::vector<Client>				_waitingClients;
+		std::map<std::string, Client>	_authClients;
+		std::map<std::string, Channel>	_channels;
 
 };
