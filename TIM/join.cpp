@@ -17,7 +17,7 @@ void join(std::string cmd, std::stringstream *ss){
 	while (*ss >> words)
     {
     	std::cout << "words :" << words << std::endl;
-        if (words == "0" && sscount != 2)
+        if (words == "0" && sscount != 1)
             resetUserChans = true;    
         else if (resetUserChans)
             throw std::invalid_argument("Error: too many arguments");
