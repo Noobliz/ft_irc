@@ -7,6 +7,7 @@ void join(std::string cmd, std::stringstream *ss){
     std::map<std::string, std::string> channelPw;
     std::stack<std::string> passwords;
     std::string words;
+    bool resetUserChans = false;
     int sscount = 0;
     int channelCount = 0;
     int passwordCount = 0;
@@ -16,7 +17,11 @@ void join(std::string cmd, std::stringstream *ss){
 	while (*ss >> words)
     {
     	std::cout << "words :" << words << std::endl;
-        if (sscount == 0)
+        if (words == "0" && sscount != 2)
+            resetUserChans = true;    
+        else if (resetUserChans)
+            throw std::invalid_argument("Error: too many arguments");
+        else if (sscount == 0)
         {
             std::stringstream channels(words);
             std::string channelName;
@@ -62,5 +67,7 @@ void join(std::string cmd, std::stringstream *ss){
     {
         std::cout << it->first << " -> " << it->second <<std::endl;
     }
+    std::cout << "Reset User Channels: " << resetUserChans << std::endl;
+    //doJoin(std::map<std::string, std::string>, resetUserChans);
     return ;
 }
