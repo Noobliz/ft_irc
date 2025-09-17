@@ -5,6 +5,7 @@
 
 std::map<std::string, Channel>	_channels;
 
+//? attention, quand un client join il doit voir tous les messages du channel
 void	join(Client client, std::map<std::string, std::string> args)
 {
 	for (std::map<std::string, std::string>::iterator it = args.begin(); it != args.end(); ++it)
@@ -12,15 +13,15 @@ void	join(Client client, std::map<std::string, std::string> args)
 		std::map<std::string, Channel>::iterator cit = _channels.find((*it).first);
 		if (cit != _channels.end())
 		{
-			if (_channels[(*it).first].checkPass((*it).second))
+			if (_channels[(*it).first].checkPassword((*it).second))
 			{
-				if (_channels[(*it).first].isInvited(client)) //! peut directement verifier si le client est invité ou pas dans addClient.
-					_channels[(*it).first].addClient(client);
+				//? attention, addClient ne rajoutera pas de client s'il est pas invité et que le server est en inviteMode
+				_channels[(*it).first].addClient(client);
 			}
 		}
 		else
 		{
-			Channel newChan((*it).first, (*it).second);
+			Channel newChan(client, (*it).first, (*it).second);
 			_channels[(*it).first] = newChan;
 		}
 	}

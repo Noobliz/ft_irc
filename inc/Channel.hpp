@@ -1,21 +1,58 @@
 #pragma once
 
-#include <vector>
+#include <includes.hpp>
+#include <Client.hpp>
+#include <map>
+
+class Client;
 
 class Channel
 {
 	public:
 
-		Channel(std::string name, std::string pass);
+		Channel	&operator=(Channel & other);
+		~Channel();
 
-		bool checkPass(std::string pass);
-		void addClient(Client client);
-		bool isInvited(Client client) { if (_inviteMode == false) return true;}
+		//? attention, le client qui construit la class Channel doit etre operateur
+		Channel(Client & client, std::string name, std::string pass);
+
+		bool		checkPassword(std::string pass);
+
+		bool		isInInviteMode(void);
+		void		setInviteMode(bool const & im);
+
+		std::string	getName(void) const;
+		void		setName(std::string const & name);
+
+		std::string	getPassword(void) const;
+		void		setPassword(std::string const & pass);
+
+		int			getUserLimit(void) const;
+		void		setUserLimit(int const & ul);
+
+		//? j'ai besoin pour join, d'un addclient pour chacune des maps string/Client
+		void		addClient(Client & client); //! attention: verifier si invité.
+		void		addOperator(Client & client);
+		void		inviteClient(Client & client);
 
 	private:
-	
-		bool _inviteMode;
-		std::vector<Client> connectedClients;
-		std::vector<Client> invitedClients;
+
+		Channel();
+		Channel(Channel & copy);
+
+		std::string						_name;
+		bool							_inviteMode;
+		std::string						_password;
+		int								_userLimit;
+
+		//? liste des clients connectés
+		std::map<std::string, Client>	_connectedClients;
+
+		//? liste des clients invités
+		std::map<std::string, Client>	_invitedClients;
+
+		//? liste des clients operateurs
+		std::map<std::string, Client>	_chanOperators;
+
 
 };
