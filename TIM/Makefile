@@ -5,6 +5,13 @@ NAME = ircserv
 
 SRC =	main.cpp		\
 		join.cpp		\
+		privmsg.cpp		\
+		pass.cpp		\
+		nick.cpp		\
+		user.cpp		\
+		invite.cpp		\
+		kick.cpp		\
+		topic.cpp		\
 
 OBJDIR = .obj/
 OBJ = $(addprefix $(OBJDIR),$(SRC:.cpp=.o))
