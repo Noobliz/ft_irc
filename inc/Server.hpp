@@ -30,8 +30,9 @@ class Server
 		void	run(void);
 
 		int		repartitor(Client & client, std::string str);
-		//Client	findClient(int fd) const;
+		int		findClient(std::string nickname);
 
+		void	privateMsg(Client client, std::vector<std::string> nick, std::string msg);
 	private :
 
 		Server();

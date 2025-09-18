@@ -91,3 +91,4 @@ bool		Client::isInChan(std::string const & channelname) const
 	else
 		return false;
 }
+
