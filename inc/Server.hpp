@@ -21,7 +21,7 @@ class Server
 
 	public :
 
-		Server(uint16_t const & port);
+		Server(uint16_t const & port, std::string & password);
 		~Server();
 
 		void	init(void);
@@ -32,6 +32,7 @@ class Server
 		Server();
 
 		uint16_t			_port;
+		std::string			_password;
 		int					_sockfd;
 		int					_epollfd;
 		struct sockaddr_in	_addr;

@@ -1,6 +1,6 @@
 #include <Server.hpp>
 
-Server::Server(uint16_t const & port) : _port(port) {}
+Server::Server(uint16_t const & port, std::string & password) : _port(port), _password(password) {}
 
 Server::~Server()
 {
