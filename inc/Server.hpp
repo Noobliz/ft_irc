@@ -11,6 +11,7 @@
 #include <Client.hpp>
 #include <Channel.hpp>
 #include <map>
+#include <vector>
 
 # define MAX_CLIENT 1024
 # define MAX_EVENTS 256
