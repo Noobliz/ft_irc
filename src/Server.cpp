@@ -1,6 +1,6 @@
 #include <Server.hpp>
 
-Server::Server(uint16_t const & port) : _port(port) {}
+Server::Server(uint16_t const & port, std::string & password) : _port(port), _password(password) {}
 
 Server::~Server()
 {
@@ -58,55 +58,63 @@ void	Server::run(void)
 			if (_events[i].data.fd == _sockfd)
 			{
 				int			tmpfd;
-				Client		client;
 
 				tmpfd = accept(_sockfd, (struct sockaddr *)&_addr, &addrlen);
 				if (tmpfd == -1)
 					throw std::invalid_argument("Error: accept fail");
-				client.setFD(tmpfd);
+				//client.setFD(tmpfd);
 
 				std::cout << "j'ai ecoute un client" << std::endl;
 
 				_ev.events = EPOLLIN;
-				_ev.data.fd = client.getFD();
+				//_ev.data.fd = client.getFD();
+				_ev.data.fd = tmpfd;
 
-				if (epoll_ctl(_epollfd, EPOLL_CTL_ADD, client.getFD(), &_ev) == -1)
+				_waitingClients.push_back(Client(tmpfd));
+
+				// if (epoll_ctl(_epollfd, EPOLL_CTL_ADD, client.getFD(), &_ev) == -1)
+				if (epoll_ctl(_epollfd, EPOLL_CTL_ADD, tmpfd, &_ev) == -1)
 					throw std::invalid_argument("Error: epoll_ctl fail");
+
 			}
 			else
 			{
 				if (_events[i].events & EPOLLIN)
 				{
-					char *buffer2 = (char *)calloc(10, 1);
-					size_t r = recv(_events[i].data.fd, buffer2, 10, 0);
-					if (r == 0)
-					{
-						std::cout << "client fermax" << std::endl;
-						close(_events[i].data.fd);
-					}
-					else if (r > 0)
-					{
-						if (buffer2[0] != 0)
-							std::cout << "buffer 2 = " << buffer2 << std::endl;
-						free(buffer2);
-					}
-					else
-						throw std::invalid_argument("Error: recv fail");
+					//?detecter la commande. "JOIN #chan1" "PRIVMSG #chan1 :bonjour a tou.te.s"
 
-					size_t s = send(_events[i].data.fd, (void *)"j'ai bien recu ton message merci\n\0", 35, 0);
 
-					if (s == 0)
-					{
-						std::cout << "propre" << std::endl;
-					}
-					else if (s > 0)
-					{
-						std::cout << "retour ok" << std::endl;
-					}
-					else
-					{
-						//ici on peut modifier les events pour unlock EPOLLOUT et donc attendre que le buffer soit OK apparemment
-					}
+
+					// char *buffer2 = (char *)calloc(10, 1);
+					// size_t r = recv(_events[i].data.fd, buffer2, 10, 0);
+					// if (r == 0)
+					// {
+					// 	std::cout << "client fermax" << std::endl;
+					// 	close(_events[i].data.fd);
+					// }
+					// else if (r > 0)
+					// {
+					// 	if (buffer2[0] != 0)
+					// 		std::cout << "buffer 2 = " << buffer2 << std::endl;
+					// 	free(buffer2);
+					// }
+					// else
+					// 	throw std::invalid_argument("Error: recv fail");
+
+					// size_t s = send(_events[i].data.fd, (void *)"j'ai bien recu ton message merci\n\0", 35, 0);
+
+					// if (s == 0)
+					// {
+					// 	std::cout << "propre" << std::endl;
+					// }
+					// else if (s > 0)
+					// {
+					// 	std::cout << "retour ok" << std::endl;
+					// }
+					// else
+					// {
+					// 	//ici on peut modifier les events pour unlock EPOLLOUT et donc attendre que le buffer soit OK apparemment
+					// }
 
 				}
 
