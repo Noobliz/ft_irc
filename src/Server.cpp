@@ -8,6 +8,20 @@ Server::~Server()
 	close(_epollfd);
 }
 
+int	Server::findClient(std::string nickname)
+{
+	typename std::map<int, Client>::iterator ite = _clients.begin();
+
+	for (int i = 0; i < _clients.size(); i++)
+	{
+		if (_clients[i].getNickname() == nickname)
+			return _clients[i].getFD();
+	}
+	return (-2);
+}
+
+
+
 static void user(std::stringstream *sstream, bool hasPrefix, std::string prefix){
     t_userinfos userinfos;
     std::string words;

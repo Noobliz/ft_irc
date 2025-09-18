@@ -30,7 +30,7 @@ class Server
 		void	run(void);
 
 		int		repartitor(Client & client, std::string str);
-		//Client	findClient(int fd) const;
+		int		findClient(std::string nickname);
 
 	private :
 

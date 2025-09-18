@@ -1,39 +1,54 @@
 #include <map>
 #include "inc/Client.hpp"
 #include <vector>
+#include "inc/Channel.hpp"
 
-class Channel{
-	private:
+// class Channel{
+// 	private:
 
-	public:
-		std::vector<Client> clientsList;
-};
+// 	public:
+// 		std::vector<Client> clientsList;
+// };
 
-std::map<std::string, Client> clients;
+// std::map<int, Client> clients;
 
 std::map<std::string, Channel> channels;
 
+int	findClient(std::map<int, Client> clients, std::string nickname)
+{
+	typename std::map<int, Client>::iterator ite = clients.begin();
 
+	for (int i = 0; i < clients.size(); i++)
+	{
+		if (clients[i].getNickname() == nickname)
+			return clients[i].getFD();
+	}
+	return (-2);
+}
 //std::vector<std::string> nick;
 void	privateMsg(Client client, std::vector<std::string> nick, std::string msg)
 {
-	typename std::map<std::string, Client>::iterator ite;
 	typename std::map<std::string, Channel>::iterator ite2;
+	int fd;
 
 	for(int i = 0; i < nick.size(); i++)
 	{
-		ite = clients.find(nick[i]);
+		fd = findClient(clients, nick[i]);
 		ite2 = channels.find(nick[i]);
-		if(ite != clients.end())
+		if(fd >= 0)
 		{
-			//send((*ite).fd, msg);
+			//send((fd, msg);
 		}
-		else if (ite2 != channels.end())// NEED TO CHECK IF CLIENT HAS ACCESS TO SERV
+		else if (ite2 != channels.end())
 		{
 			std::string index = (*ite2).first;
-			for (int i = 0; i < (*ite2).second.clientsList.size() / channels[index].clientsList.size(); i++)
+			ite2 = channels[index]._connectedClients.find(client.getNickname());//check if user is part of chan he want to send msg
+			if (ite2 != channels[index]._connectedClients.end())
 			{
-				send(channels[index].clientsList[i].getFD(), msg);
+				for (int i = 0; i < channels[index]._connectedClients.size(); i++)
+				{
+					//send(channels[index].clientsList[i].getFD(), msg);
+				}
 			}
 		}
 		else
@@ -46,9 +61,4 @@ void	privateMsg(Client client, std::vector<std::string> nick, std::string msg)
 		}
 	}
 	
-}
-
-int main ()
-{
-	return 0;
 }
