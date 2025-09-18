@@ -10,7 +10,8 @@ class Channel
 {
 	public:
 
-		Channel	&operator=(Channel & other);
+		Channel(Channel const & copy);
+		Channel	&operator=(Channel const & other);
 		~Channel();
 
 		//? attention, le client qui construit la class Channel doit etre operateur
@@ -44,7 +45,6 @@ class Channel
 	private:
 
 		Channel();
-		Channel(Channel & copy);
 
 		std::string						_name;
 		std::string						_topic;

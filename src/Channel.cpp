@@ -1,8 +1,8 @@
 #include <Channel.hpp>
 
 Channel::Channel() {}
-Channel::Channel(Channel & copy) { *this = copy; }
-Channel	&Channel::operator=(Channel & other)
+Channel::Channel(Channel const & copy) { *this = copy; }
+Channel	&Channel::operator=(Channel const & other)
 {
 	if (this != &other)
 	{
@@ -13,9 +13,8 @@ Channel	&Channel::operator=(Channel & other)
 		_connectedClients = other._connectedClients;
 		_invitedClients = other._invitedClients;
 		_chanOperators = other._chanOperators;
-
-		return *this;
 	}
+	return *this;
 }
 
 Channel::~Channel()

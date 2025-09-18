@@ -11,8 +11,10 @@ class Client
 
 	public :
 
+		Client();
 		Client(int fd);
-		Client	&operator=(Client & other);
+		Client(Client const & copy);
+		Client	&operator=(Client const & other);
 		~Client();
 
 		int			getFD(void) const;
@@ -31,9 +33,6 @@ class Client
 		//! sert pour savoir si je peux envoyer le message dans le chan, mais aussi pour savoir si je dois effectuer ou non "join"
 
 	private :
-
-		Client();
-		Client(Client & copy);
 
 		int			_fd;
 
