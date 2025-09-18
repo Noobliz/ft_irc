@@ -46,10 +46,12 @@ static void user(std::stringstream *sstream, bool hasPrefix, std::string prefix)
     }
     if (sscount != 4)
         throw std::invalid_argument("Error: not enough arguments.");
+    std::cout << "Debug infos:" << std::endl;
     std::cout << "username:" << userinfos.username << std::endl;
     std::cout << "hostname:" << userinfos.hostname << std::endl;
     std::cout << "servername:" << userinfos.servername << std::endl;
     std::cout << "realname:" << userinfos.realname << std::endl;
+    std::cout << std::endl;
     (void)prefix;//supress
     (void)hasPrefix;//supress
     //doUser(userinfos, hasPrefix, prefix);
@@ -92,8 +94,10 @@ static void topic(std::stringstream *sstream, bool hasPrefix, std::string prefix
     }
     if (sscount < 1)
         throw std::invalid_argument("Error: not enough arguments.");
+    std::cout << "Debug infos:" << std::endl;
     std::cout << "Channel:" << channel << std::endl;
     std::cout << "New topic:" << msg << std::endl;
+    std::cout << std::endl;
     (void)prefix;//supress
     (void)hasPrefix;//supress
     //doTopic(channel, msg, hasPrefix, prefix);
@@ -139,12 +143,14 @@ static void privmsg(Client & client, std::stringstream *sstream, bool hasPrefix,
     }
     if (sscount != 2)
         throw std::invalid_argument("Error: not enough arguments.");
+    std::cout << "Debug infos:" << std::endl;
     std::cout << "List:" << std::endl;
     for (std::list<std::string>::iterator it = msgTarget.begin(); it != msgTarget.end(); ++it)
     {
         std::cout << *it << std::endl;
     }
     std::cout << "Msg:" << msg << std::endl;
+    std::cout << std::endl;
     (void)prefix;//supress
     (void)hasPrefix;//supress
 	(void)client; //hill
@@ -170,7 +176,9 @@ static void pass(std::stringstream *sstream){
     }
     if (sscount != 1)
         throw std::invalid_argument("Error: not enough arguments.");
+    std::cout << "Debug infos:" << std::endl;
     std::cout << "Password:" << password << std::endl;
+    std::cout << std::endl;
     //doPass(password, hasPrefix, prefix);
     return ;
 }
@@ -191,7 +199,9 @@ static void nick(std::stringstream *sstream, bool hasPrefix, std::string prefix)
     }
     if (sscount != 1)
         throw std::invalid_argument("Error: not enough arguments.");
+    std::cout << "Debug infos:" << std::endl;
     std::cout << "Nick:" << nick << std::endl;
+    std::cout << std::endl;
     (void)prefix;//supress
     (void)hasPrefix;//supress
     //doNick(nick, hasPrefix, prefix);
@@ -239,9 +249,11 @@ static void kick(std::stringstream *sstream, bool hasPrefix, std::string prefix)
     }
     if (sscount < 2)
         throw std::invalid_argument("Error: not enough arguments.");
+    std::cout << "Debug infos:" << std::endl;
     std::cout << "Channel:" << channel << std::endl;
     std::cout << "Target:" << target << std::endl;
     std::cout << "Msg:" << msg << std::endl;
+    std::cout << std::endl;
     (void)prefix;//supress
     (void)hasPrefix;//supress
     //doKick(channel, target, msg, hasPrefix, prefix);
@@ -307,12 +319,14 @@ static void join(std::stringstream *sstream, bool hasPrefix, std::string prefix)
     }
     if (sscount < 1)
         throw std::invalid_argument("Error: not enough arguments.");
+    std::cout << "Debug infos:" << std::endl;
     std::cout << "Map:" << std::endl;
     for (std::map<std::string, std::string>::iterator it = channelPw.begin(); it != channelPw.end(); ++it)
     {
         std::cout << it->first << " -> " << it->second <<std::endl;
     }
     std::cout << "Reset User Channels: " << resetUserChans << std::endl;
+    std::cout << std::endl;
     (void)prefix;//supress
     (void)hasPrefix;//supress
     //doJoin(std::map<std::string, std::string>, resetUserChans, hasPrefix, prefix);
@@ -342,11 +356,89 @@ static void invite(std::stringstream *sstream, bool hasPrefix, std::string prefi
     }
     if (sscount != 2)
         throw std::invalid_argument("Error: not enough arguments.");
+    std::cout << "Debug infos:" << std::endl;
     std::cout << "Target:" << target << std::endl;
     std::cout << "Channel:" << channel << std::endl;
+    std::cout << std::endl;
     (void)prefix;//supress
     (void)hasPrefix;//supress
     //doInvite(target, channel, hasPrefix, prefix);
+    return ;
+}
+
+static void mode(std::stringstream *sstream, bool hasPrefix, std::string prefix)
+{
+    std::string newOperator;
+    std::string words;
+    bool activate = true;
+    std::map<char, bool> modes;
+    int sscount = 0;
+
+
+	while (*sstream >> words)
+    {
+    	std::cout << "words :" << words << std::endl;
+        if (sscount == 0)
+        {
+            for (size_t i = 0; i < words.size(); i++)
+            {
+                //std::cout << "words[i] :" << words[i] << std::endl;
+                if (words[i] == '+' && i != words.size() - 1)
+                {
+                    if (i == 0 || (i > 0 && words[i - 1] != '+' && words[i - 1] != '-'))
+                        activate = true;
+                    else
+                        throw std::invalid_argument("Error: bad arguments.");
+                }
+                else if (words[i] == '-' && i != words.size() - 1)
+                {
+                    if (i == 0 || (i > 0 && words[i - 1] != '+' && words[i - 1] != '-'))
+                        activate = false;
+                    else
+                        throw std::invalid_argument("Error: bad arguments.");
+                }
+                else if ((words[i] == 'i' || words[i] == 't' 
+                || words[i] == 'k' || words[i] == 'l' || words[i] == 'o')
+                && modes.find(words[i]) == modes.end())
+                {
+                    if (i != 0 && (words[i - 1] == '+' || words[i - 1] == '-'))
+                        modes[words[i]] = activate;
+                    else
+                        throw std::invalid_argument("Error: bad arguments.");
+                }
+                else
+                    throw std::invalid_argument("Error: bad arguments");
+            }
+        }
+        else if (sscount == 1)
+            newOperator = words;
+        else if (sscount > 1)
+            throw std::invalid_argument("Error: too many arguments.");
+        sscount++;
+    }
+    if (sscount < 1)
+        throw std::invalid_argument("Error: not enough arguments.");
+    if (modes.find('o') != modes.end() && newOperator == "")
+        throw std::invalid_argument("Error: missing target for operator change mode.");
+    if (modes.find('o') == modes.end() && newOperator != "")
+        throw std::invalid_argument("Error: too many arguments.");
+    std::cout << "Debug infos:" << std::endl;
+    for (std::map<char, bool>::iterator it = modes.begin(); it != modes.end(); ++it)
+    {
+        std::string switched;
+        if (it->second)
+            switched = "activated";
+        else
+            switched = "desactivated";
+        if (it->first == 'o')
+            std::cout << newOperator << "'s rights have been " << switched << std::endl;
+        else
+            std::cout << "Mode " << it->first << " has been " << switched << std::endl;
+    }
+    std::cout << std::endl;
+    (void)prefix;//supress
+    (void)hasPrefix;//supress
+    //doMode(modes, newOperator, hasPrefix, prefix);
     return ;
 }
 
@@ -388,7 +480,7 @@ static void chooseCmd(Client & client, std::string prefix, bool hasPrefix, std::
 	else if(cmd == "TOPIC")
 		topic(sstream, hasPrefix, prefix);
 	else if(cmd == "MODE")
-			;//
+		mode(sstream, hasPrefix, prefix);
 	else
 		throw std::invalid_argument("Error: unknown command");
 	return ;
@@ -503,8 +595,32 @@ void	Server::run(void)
 					// utiliser la fonction timRepartitor() avec le buffer reconstruit
 					// puis dans timRepartitor, mettre nos fonctions a la suite du parsingTim()
 
-					char buffer[1024] = "";
-					size_t r = recv(_events[i].data.fd, buffer, 1024, 0);
+
+                    //Ancienne version
+					// char buffer[1024] = "";
+					// size_t r = recv(_events[i].data.fd, buffer, 1024, 0);
+					// if (r == 0)
+					// {
+					// 	std::cout << "client fermax" << std::endl;
+					// 	close(_events[i].data.fd);
+					// }
+					// else if (r > 0)
+					// {
+					// 	std::cout << "je recois un message" << std::endl;
+					// 	if (buffer[0] != 0)
+					// 	{
+					// 		concatstr = buffer;
+					// 		std::cout << concatstr.size() << std::endl;
+					// 		repartitor(_clients[_events[i].data.fd], concatstr);
+					// 		concatstr = "";
+					// 	}
+
+					// }
+					// else
+					// 	throw std::invalid_argument("Error: recv fail");
+
+                    char buffer[2] = "";
+					size_t r = recv(_events[i].data.fd, buffer, 1, 0);
 					if (r == 0)
 					{
 						std::cout << "client fermax" << std::endl;
@@ -512,14 +628,17 @@ void	Server::run(void)
 					}
 					else if (r > 0)
 					{
-						std::cout << "je recois un message" << std::endl;
-						if (buffer[0] != 0)
+						//std::cout << "je recois un message" << std::endl;
+						if (buffer[0] != '\n')
 						{
-							concatstr = buffer;
-							std::cout << concatstr.size() << std::endl;
-							repartitor(_clients[_events[i].data.fd], concatstr);
-							concatstr = "";
-						}
+                            concatstr += buffer;
+                            //std::cout << concatstr << std::endl;
+                        }
+                        else 
+                        {
+                            repartitor(_clients[_events[i].data.fd], concatstr);
+                            concatstr = "";
+                        }
 
 					}
 					else
