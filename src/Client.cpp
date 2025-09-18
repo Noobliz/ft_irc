@@ -1,9 +1,9 @@
 #include <Client.hpp>
 
 Client::Client() {}
-Client::Client(Client & copy) { *this = copy; }
+Client::Client(Client const & copy) { *this = copy; }
 
-Client	&Client::operator=(Client & other)
+Client	&Client::operator=(Client const & other)
 {
 	if (this != &other)
 	{
@@ -15,9 +15,8 @@ Client	&Client::operator=(Client & other)
 		_servername = other._servername;
 		_realname = other._realname;
 		_channels = other._channels;
-
-		return *this;
 	}
+	return *this;
 }
 
 Client::Client(int fd) : _fd(fd)

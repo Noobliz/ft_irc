@@ -38,6 +38,7 @@ void user(std::stringstream *ss, bool hasPrefix, std::string prefix){
                 std::stringstream msgSStream(userinfos.realname);
                 std::getline(msgSStream, userinfos.realname, ':');
                 std::getline(msgSStream, userinfos.realname);
+                sscount++;
                 break;
             }
             userinfos.realname = words;

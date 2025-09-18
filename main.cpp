@@ -7,7 +7,7 @@ int	main(int ac, char **av)
 	u_int16_t	port;
 	std::string	password;
 
-	if (ac != 2)
+	if (ac != 3)
 	{
 		std::cerr << "Error: please run this server with 2 arguments <port> <password>." << std::endl;
 		return 1;
@@ -15,7 +15,7 @@ int	main(int ac, char **av)
 	password = static_cast<std::string>(av[2]);
 	parsePort = std::strtol(av[1], NULL, 10);
 
-	if (parsePort < 0 && parsePort > 65536)
+	if (parsePort < 0 || parsePort > 65536)
 	{
 		std::cerr << "Error: port must be between 0 and 65536." << std::endl << "Hint: use port > 1024 unless you are root." << std::endl;
 		return 1;

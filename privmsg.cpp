@@ -15,7 +15,7 @@ std::map<std::string, Channel> channels;
 
 
 //std::vector<std::string> nick;
-void	privateMsg(std::vector<std::string> nick, std::string msg)
+void	privateMsg(Client client, std::vector<std::string> nick, std::string msg)
 {
 	typename std::map<std::string, Client>::iterator ite;
 	typename std::map<std::string, Channel>::iterator ite2;
@@ -28,7 +28,7 @@ void	privateMsg(std::vector<std::string> nick, std::string msg)
 		{
 			//send((*ite).fd, msg);
 		}
-		else if (ite2 != channels.end())
+		else if (ite2 != channels.end())// NEED TO CHECK IF CLIENT HAS ACCESS TO SERV
 		{
 			std::string index = (*ite2).first;
 			for (int i = 0; i < (*ite2).second.clientsList.size() / channels[index].clientsList.size(); i++)

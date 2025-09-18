@@ -54,30 +54,26 @@ void chooseCmd(std::string prefix, bool hasPrefix, std::stringstream *ss){
 }
 
 
-int	main(int ac, char **av)
+int	timRepartitor(std::string str)
 {
-	if (ac == 2)
+	if (!str.empty())
 	{
-		if (av[1][0])
+		bool hasPrefix = false;
+		std::string prefix = "";
+		try
 		{
-			bool hasPrefix = false;
-			std::string prefix = "";
-			try
+			std::stringstream ss(str);
+			if (str[0] == ':')
 			{
-				std::string str = av[1];
-				std::stringstream ss(str);
-				if (str[0] == ':')
-				{
-					prefix = getPrefix(&ss, &hasPrefix);
-					std::cout << "prefix : " << prefix << std::endl;
-				}
-				chooseCmd(prefix, hasPrefix, &ss);
+				prefix = getPrefix(&ss, &hasPrefix);
+				std::cout << "prefix : " << prefix << std::endl;
 			}
-			catch (std::exception &e)
-			{
-				std::cerr << e.what() << std::endl;
-				return 1;
-			}
+			chooseCmd(prefix, hasPrefix, &ss);
+		}
+		catch (std::exception &e)
+		{
+			std::cerr << e.what() << std::endl;
+			return 1;
 		}
 	}
 }

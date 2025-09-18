@@ -12,6 +12,8 @@
 #include <Channel.hpp>
 #include <map>
 #include <vector>
+#include <stack>
+#include <list>
 
 # define MAX_CLIENT 1024
 # define MAX_EVENTS 256
@@ -27,6 +29,9 @@ class Server
 		void	init(void);
 		void	run(void);
 
+		int		repartitor(Client & client, std::string str);
+		//Client	findClient(int fd) const;
+
 	private :
 
 		Server();
@@ -39,8 +44,7 @@ class Server
 		struct epoll_event	_events[MAX_EVENTS];
 		struct epoll_event	_ev;
 
-		std::vector<Client>				_waitingClients;
-		std::map<std::string, Client>	_authClients;
+		std::map<int, Client>			_clients;
 		std::map<std::string, Channel>	_channels;
 
 };

@@ -6,6 +6,7 @@ NAME = ircserv
 SRC =	main.cpp		\
 		src/Server.cpp	\
 		src/Client.cpp	\
+		src/Channel.cpp	\
 
 OBJDIR = .obj/
 OBJ = $(addprefix $(OBJDIR),$(SRC:.cpp=.o))
