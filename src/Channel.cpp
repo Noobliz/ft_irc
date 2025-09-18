@@ -123,3 +123,8 @@ void		Channel::inviteClient(Client & client)
 	if (inviteIter == _invitedClients.end() && _inviteMode == true)
 		_invitedClients[client.getNickname()] = client;
 }
+
+std::map<std::string, Client>	Channel::getConnectedClients()
+{
+	return _connectedClients;
+}

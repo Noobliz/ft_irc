@@ -20,6 +20,41 @@ int	Server::findClient(std::string nickname)
 	return (-2);
 }
 
+void	Server::privateMsg(Client client, std::vector<std::string> nick, std::string msg)
+{
+	typename std::map<std::string, Channel>::iterator ite2;
+	int fd;
+
+	for(int i = 0; i < nick.size(); i++)
+	{
+		fd = findClient(nick[i]);
+		ite2 = _channels.find(nick[i]);
+		if(fd >= 0)
+		{
+			//send((fd, msg);
+		}
+		else if (ite2 != _channels.end())
+		{
+			std::string index = (*ite2).first;
+			if (client.isInChan(nick[i]))
+			{
+				for (int i = 0; i < _channels[index].getConnectedClients().size(); i++)
+				{
+					//send(channels[index].clientsList[i].getFD(), msg);
+				}
+			}
+		}
+		else
+		{
+		// 	ERR_NORECIPIENT                 ERR_NOTEXTTOSEND
+        //    ERR_CANNOTSENDTOCHAN            ERR_NOTOPLEVEL
+        //    ERR_WILDTOPLEVEL                ERR_TOOMANYTARGETS
+        //    ERR_NOSUCHNICK
+        //    RPL_AWAY
+		}
+	}
+	
+}
 
 
 static void user(std::stringstream *sstream, bool hasPrefix, std::string prefix){

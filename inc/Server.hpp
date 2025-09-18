@@ -32,6 +32,7 @@ class Server
 		int		repartitor(Client & client, std::string str);
 		int		findClient(std::string nickname);
 
+		void	privateMsg(Client client, std::vector<std::string> nick, std::string msg);
 	private :
 
 		Server();
