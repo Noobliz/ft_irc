@@ -31,13 +31,14 @@ void	Server::privateMsg(Client client, std::vector<std::string> nick, std::strin
 		ite2 = _channels.find(nick[i]);
 		if(fd >= 0)
 		{
-			//send((fd, msg);
+			send(fd, msg.c_str(), msg.size(), 0);
 		}
 		else if (ite2 != _channels.end())
 		{
 			std::string index = (*ite2).first;
 			if (client.isInChan(nick[i]))
 			{
+				
 				for (int i = 0; i < _channels[index].getConnectedClients().size(); i++)
 				{
 					//send(channels[index].clientsList[i].getFD(), msg);
