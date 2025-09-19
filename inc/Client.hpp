@@ -44,6 +44,8 @@ class Client
 		bool		isInChan(std::string const & channelname) const;
 		//! sert pour savoir si je peux envoyer le message dans le chan, mais aussi pour savoir si je dois effectuer ou non "join"
 
+		void		addChan(std::string const & channelname, Channel & channel);
+
 	private :
 
 		int			_fd;

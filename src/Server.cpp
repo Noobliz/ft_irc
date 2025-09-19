@@ -36,8 +36,6 @@ void	Server::privateMsg(Client & client, std::vector<std::string> nick, std::str
 	std::map<std::string, Channel>::iterator ite2;
 	int fd;
 
-	std::cout << "message recu dans privateMsg (celle de louise)" << msg;
-
 	//! lise : ajoute une verif si le client est bien auth.
 	for(size_t i = 0; i < nick.size(); i++)
 	{
@@ -55,15 +53,20 @@ void	Server::privateMsg(Client & client, std::vector<std::string> nick, std::str
 		}
 		else if (ite2 != _channels.end())
 		{
+			std::cout << "J'ESSAIE D'ENVOYER UN MESSAGE DANS UN CHANNEL" << std::endl;
+
 			std::string index = (*ite2).first;
             std::map<std::string, Client> tmp;
             tmp = _channels[index].getConnectedClients();
 			if (client.isInChan(nick[i]))
 			{
+				std::cout << "JE SUIS BIEN DANS LE CHANNEL DONC JE PEUX" << std::endl;
+
 				std::map<std::string, Client>::iterator ite = tmp.begin();
 				for (; ite != tmp.end(); ++ite)
 				{
 					send((*ite).second.getFD(), msg.c_str(), msg.length(), 0);
+					send(fd, "\n", 2, 0);
 				}
 			}
 		}
@@ -78,6 +81,35 @@ void	Server::privateMsg(Client & client, std::vector<std::string> nick, std::str
 		}
 	}
 
+}
+
+void	Server::doJoin(std::map<std::string, std::string> chanPwPair, bool resetUserChans, t_commandArgs cArgs)
+{
+	(void)resetUserChans;
+
+	for (std::map<std::string, std::string>::iterator it = chanPwPair.begin(); it != chanPwPair.end(); ++it)
+	{
+		std::map<std::string, Channel>::iterator cit = _channels.find((*it).first);
+		if (cit != _channels.end())
+		{
+			if (_channels[(*it).first].checkPassword((*it).second))
+			{
+				//? attention, addClient ne rajoutera pas de client s'il est pas invité et que le server est en inviteMode
+				_channels[(*it).first].addClient(*cArgs.client);
+				cArgs.client->addChan((*it).first, _channels[(*it).first]);
+				send(cArgs.client->getFD(), "tu es bien connecte au channel <nom>\n", 38, 0);
+			}
+		}
+		else
+		{
+			Channel newChan(*cArgs.client, (*it).first, (*it).second);
+			_channels[(*it).first] = newChan;
+			_channels[(*it).first].addClient(*cArgs.client);
+			cArgs.client->addChan((*it).first, _channels[(*it).first]);
+			send(cArgs.client->getFD(), "le channel a ete cree et porte le nom de <nom>\n", 48, 0);
+		}
+	}
+	/* accusé de réception ? */
 }
 
 static std::string getPrefix(std::stringstream *sstream, bool *hasPrefix)

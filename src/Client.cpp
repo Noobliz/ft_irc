@@ -124,3 +124,9 @@ bool		Client::isInChan(std::string const & channelname) const
 	else
 		return false;
 }
+
+void		Client::addChan(std::string const & channelname, Channel & channel)
+{
+	//? channels
+	_channels[channelname] = channel;
+}

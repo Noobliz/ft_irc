@@ -322,17 +322,16 @@ void	Server::join(t_commandArgs & cArgs)
 	}
 	if (sscount < 1)
 		throw std::invalid_argument("Error: not enough arguments.");
-	std::cout << "Debug infos:" << std::endl;
-	std::cout << "Map:" << std::endl;
-	for (std::map<std::string, std::string>::iterator it = channelPw.begin(); it != channelPw.end(); ++it)
-	{
-		std::cout << it->first << " -> " << it->second <<std::endl;
-	}
-	std::cout << "Reset User Channels: " << resetUserChans << std::endl;
-	std::cout << std::endl;
-	(void)cArgs.prefix;//supress
-	(void)cArgs.hasPrefix;//supress
-	//doJoin(std::map<std::string, std::string>, resetUserChans, hasPrefix, prefix);
+	// std::cout << "Debug infos:" << std::endl;
+	// std::cout << "Map:" << std::endl;
+	// for (std::map<std::string, std::string>::iterator it = channelPw.begin(); it != channelPw.end(); ++it)
+	// {
+	// 	std::cout << it->first << " -> " << it->second <<std::endl;
+	// }
+	// std::cout << "Reset User Channels: " << resetUserChans << std::endl;
+	// std::cout << std::endl;
+
+	doJoin(channelPw, resetUserChans, cArgs);
 	return ;
 }
 

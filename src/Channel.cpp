@@ -1,12 +1,19 @@
 #include <Channel.hpp>
 
-Channel::Channel() {}
+Channel::Channel() :
+	_name(),
+	_inviteMode(false),
+	_password()
+{}
+
 Channel::Channel(Channel const & copy) { *this = copy; }
 Channel	&Channel::operator=(Channel const & other)
 {
 	if (this != &other)
 	{
 		_name = other._name;
+		_topic = other._topic;
+		_topicForAll = other._topicForAll;
 		_inviteMode = other._inviteMode;
 		_password = other._password;
 		_userLimit = other._userLimit;
@@ -24,6 +31,7 @@ Channel::~Channel()
 
 Channel::Channel(Client & client, std::string name, std::string pass) :
 	_name(name),
+	_inviteMode(false),
 	_password(pass)
 {
 	addOperator(client);
@@ -101,9 +109,13 @@ void		Channel::addClient(Client & client)
 	std::map<std::string, Client>::const_iterator	channelIter = _connectedClients.find(client.getNickname());
 
 	if ((inviteIter != _invitedClients.end() || _inviteMode == false) && channelIter == _connectedClients.end())
+	{
+		std::cout << "JE M'INSCRI DANS LES CONNECTED du Channel" << std::endl;
 		_connectedClients[client.getNickname()] = client;
+	}
 	else
 	{
+		std::cout << "euh, je suis pas dans le channel moi..." << std::endl;
 		//? message d'erreur ?????????? feedback sur server ??????
 	}
 } //! attention: verifier si invité.

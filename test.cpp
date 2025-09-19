@@ -6,7 +6,7 @@
 std::map<std::string, Channel>	_channels;
 
 //? attention, quand un client join il doit voir tous les messages du channel
-void	join(Client client, std::map<std::string, std::string> args)
+void	join(Client & client, std::map<std::string, std::string> args)
 {
 	for (std::map<std::string, std::string>::iterator it = args.begin(); it != args.end(); ++it)
 	{
