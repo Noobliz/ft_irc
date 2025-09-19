@@ -2,14 +2,15 @@
 
 Server::Server(uint16_t const & port, std::string & password) : _port(port), _password(password)
 {
-	_commandMap["NICK"] = &nick;
-	_commandMap["USER"] = &user;
-	_commandMap["JOIN"] = &join;
-	_commandMap["PRIVMSG"] = &privmsg;
-	_commandMap["KICK"] = &kick;
-	_commandMap["INVITE"] = &invite;
-	_commandMap["TOPIC"] = &topic;
-	_commandMap["MODE"] = &mode;
+	_commandMap["NICK"] = &Server::nick;
+	_commandMap["PASS"] = &Server::pass;
+	_commandMap["USER"] = &Server::user;
+	_commandMap["JOIN"] = &Server::join;
+	_commandMap["PRIVMSG"] = &Server::privmsg;
+	_commandMap["KICK"] = &Server::kick;
+	_commandMap["INVITE"] = &Server::invite;
+	_commandMap["TOPIC"] = &Server::topic;
+	_commandMap["MODE"] = &Server::mode;
 }
 
 Server::~Server()
@@ -20,9 +21,9 @@ Server::~Server()
 
 int	Server::findClient(std::string nickname)
 {
-	typename std::map<int, Client>::iterator ite = _clients.begin();
+	//std::map<int, Client>::iterator ite = _clients.begin();
 
-	for (int i = 0; i < _clients.size(); i++)
+	for (size_t i = 0; i < _clients.size(); i++)
 	{
 		if (_clients[i].getNickname() == nickname)
 			return _clients[i].getFD();
@@ -32,10 +33,10 @@ int	Server::findClient(std::string nickname)
 
 void	Server::privateMsg(Client client, std::vector<std::string> nick, std::string msg)
 {
-	typename std::map<std::string, Channel>::iterator ite2;
+	std::map<std::string, Channel>::iterator ite2;
 	int fd;
 
-	for(int i = 0; i < nick.size(); i++)
+	for(size_t i = 0; i < nick.size(); i++)
 	{
 		fd = findClient(nick[i]);
 		ite2 = _channels.find(nick[i]);
@@ -86,10 +87,10 @@ void	Server::chooseCmd(t_commandArgs & cArgs)
 	std::string	cmd;
 	*cArgs.sstream >> cmd;
 
-	std::map<std::string, void (*)(t_commandArgs&)>::iterator it = _commandMap.find(cmd);
+	std::map<std::string, void (Server::*)(t_commandArgs&)>::iterator it = _commandMap.find(cmd);
 	if (it != _commandMap.end())
 	{
-		(*(it->second))(cArgs);
+		(this->*(it->second))(cArgs);
 	}
 	else
 	{
@@ -142,7 +143,7 @@ int	Server::repartitor(Client & client, std::string str)
 				prefix = getPrefix(&sstream, &hasPrefix);
 				std::cout << "prefix : " << prefix << std::endl;
 			}
-			cArgs.client = client;
+			cArgs.client = &client;
 			cArgs.hasPrefix = hasPrefix;
 			cArgs.prefix = prefix;
 			cArgs.sstream = &sstream;

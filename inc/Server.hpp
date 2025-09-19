@@ -1,6 +1,7 @@
 #pragma once
 
-#include <includes.hpp>
+#include <iostream>
+#include <sstream>
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <cstdlib>
@@ -8,16 +9,24 @@
 #include <fcntl.h>
 #include <sys/epoll.h>
 #include <stdexcept>
-#include <Client.hpp>
-#include <Channel.hpp>
 #include <map>
 #include <vector>
 #include <stack>
 #include <list>
-#include <commands.hpp>
+
+#include <Client.hpp>
+#include <Channel.hpp>
 
 # define MAX_CLIENT 1024
 # define MAX_EVENTS 256
+
+typedef struct s_commandArgs
+{
+	Client				*client;
+	std::string			prefix;
+	bool				hasPrefix;
+	std::stringstream	*sstream;
+}	t_commandArgs;
 
 class Server
 {
@@ -40,6 +49,16 @@ class Server
 
 		Server();
 
+		void	user(t_commandArgs & cArgs);
+		void	topic(t_commandArgs & cArgs);
+		void	privmsg(t_commandArgs & cArgs);
+		void	pass(t_commandArgs & cArgs);
+		void	nick(t_commandArgs & cArgs);
+		void	kick(t_commandArgs & cArgs);
+		void	join(t_commandArgs & cArgs);
+		void	invite(t_commandArgs & cArgs);
+		void	mode(t_commandArgs & cArgs);
+
 		uint16_t			_port;
 		std::string			_password;
 		int					_sockfd;
@@ -50,6 +69,6 @@ class Server
 
 		std::map<int, Client>			_clients;
 		std::map<std::string, Channel>	_channels;
-		std::map<std::string, void (*)(t_commandArgs&)>	_commandMap;
+		std::map<std::string, void (Server::*)(t_commandArgs&)>	_commandMap;
 
 };

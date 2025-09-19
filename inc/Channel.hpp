@@ -1,7 +1,7 @@
 #pragma once
 
-#include <includes.hpp>
 #include <Client.hpp>
+#include <iostream>
 #include <map>
 
 class Client;
@@ -10,6 +10,7 @@ class Channel
 {
 	public:
 
+		Channel();
 		Channel(Channel const & copy);
 		Channel	&operator=(Channel const & other);
 		~Channel();
@@ -37,15 +38,13 @@ class Channel
 		int			getUserLimit(void) const;
 		void		setUserLimit(int const & ul);
 
-		std::map<std::string, Client>	getConnectedClients();
+		std::map<std::string, Client>	&getConnectedClients();
 		//? j'ai besoin pour join, d'un addclient pour chacune des maps string/Client
 		void		addClient(Client & client); //! attention: verifier si invité.
 		void		addOperator(Client & client);
 		void		inviteClient(Client & client);
 
 	private:
-
-		Channel();
 
 		std::string						_name;
 		std::string						_topic;

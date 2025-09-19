@@ -1,8 +1,16 @@
 #pragma once
 
-#include <includes.hpp>
 #include <Channel.hpp>
+#include <iostream>
 #include <map>
+
+typedef struct s_userinfos
+{
+	std::string	username;
+	std::string	hostname;
+	std::string	servername;
+	std::string	realname;
+}	t_userinfos;
 
 class Channel;
 

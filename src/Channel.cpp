@@ -124,7 +124,7 @@ void		Channel::inviteClient(Client & client)
 		_invitedClients[client.getNickname()] = client;
 }
 
-std::map<std::string, Client>	Channel::getConnectedClients()
+std::map<std::string, Client>	&Channel::getConnectedClients()
 {
 	return _connectedClients;
 }

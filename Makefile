@@ -5,6 +5,7 @@ NAME = ircserv
 
 SRC =	main.cpp		\
 		src/Server.cpp	\
+		src/commands.cpp	\
 		src/Client.cpp	\
 		src/Channel.cpp	\
 
