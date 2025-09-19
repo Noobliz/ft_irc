@@ -31,18 +31,27 @@ int	Server::findClient(std::string nickname)
 	return (-2);
 }
 
-void	Server::privateMsg(Client client, std::vector<std::string> nick, std::string msg)
+void	Server::privateMsg(Client & client, std::vector<std::string> nick, std::string msg)
 {
 	std::map<std::string, Channel>::iterator ite2;
 	int fd;
 
+	std::cout << "message recu dans privateMsg (celle de louise)" << msg;
+
+	//! lise : ajoute une verif si le client est bien auth.
 	for(size_t i = 0; i < nick.size(); i++)
 	{
 		fd = findClient(nick[i]);
 		ite2 = _channels.find(nick[i]);
 		if(fd >= 0)
 		{
-			send(fd, msg.c_str(), msg.length(), 0);
+			if (_clients[fd].isAuth())
+			{
+				send(fd, msg.c_str(), msg.length(), 0);
+				send(fd, "\n", 2, 0);
+			}
+			else
+				send(client.getFD(), "non non non le destinataire est pas auth\n", 29, 0);
 		}
 		else if (ite2 != _channels.end())
 		{
@@ -60,6 +69,7 @@ void	Server::privateMsg(Client client, std::vector<std::string> nick, std::strin
 		}
 		else
 		{
+			send(client.getFD(), "probleme\n", 10, 0);
 		// 	ERR_NORECIPIENT                 ERR_NOTEXTTOSEND
         //    ERR_CANNOTSENDTOCHAN            ERR_NOTOPLEVEL
         //    ERR_WILDTOPLEVEL                ERR_TOOMANYTARGETS
@@ -281,6 +291,7 @@ void	Server::run(void)
                         }
                         else
                         {
+							concatstr += "\n";
                             repartitor(_clients[_events[i].data.fd], concatstr);
                             concatstr = "";
                         }

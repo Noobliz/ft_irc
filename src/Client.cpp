@@ -1,6 +1,12 @@
 #include <Client.hpp>
 
-Client::Client() {}
+Client::Client() :
+	_fd(-1),
+	_nickValid(false),
+	_passValid(false),
+	_userValid(false),
+	_auth(false)
+{}
 Client::Client(Client const & copy) { *this = copy; }
 
 Client	&Client::operator=(Client const & other)
@@ -8,6 +14,9 @@ Client	&Client::operator=(Client const & other)
 	if (this != &other)
 	{
 		_fd = other._fd;
+		_nickValid = other._nickValid;
+		_passValid = other._passValid;
+		_userValid = other._userValid;
 		_auth = other._auth;
 		_nickname = other._nickname;
 		_username = other._username;
@@ -19,7 +28,12 @@ Client	&Client::operator=(Client const & other)
 	return *this;
 }
 
-Client::Client(int fd) : _fd(fd)
+Client::Client(int fd) :
+	_fd(fd),
+	_nickValid(false),
+	_passValid(false),
+	_userValid(false),
+	_auth(false)
 {
 
 }
@@ -71,6 +85,24 @@ void		Client::setUserinfo(t_userinfos const & ui)
 	_username = ui.username;
 }
 
+void		Client::setNickValid(bool const nv)
+{
+	_nickValid = nv;
+	setAuth(true);
+}
+
+void		Client::setPassValid(bool const pv)
+{
+	_passValid = pv;
+	setAuth(true);
+}
+
+void		Client::setUserValid(bool const uv)
+{
+	_userValid = uv;
+	setAuth(true);
+}
+
 bool		Client::isAuth(void) const
 {
 	return _auth;
@@ -78,10 +110,11 @@ bool		Client::isAuth(void) const
 
 void		Client::setAuth(bool const auth)
 {
-	_auth = auth;
+	if (_passValid && _nickValid && _userValid)
+		_auth = auth;
 }
 
-//! attention hein, si on ne trouve pas le chan alors qu'il existe, faut verif sans const
+//! A PROPOS DU const EN PARAMETRE : attention hein, si on ne trouve pas le chan alors qu'il existe, faut verif sans const
 bool		Client::isInChan(std::string const & channelname) const
 {
 	std::map<std::string, Channel>::const_iterator	found = _channels.find(channelname);
@@ -91,4 +124,3 @@ bool		Client::isInChan(std::string const & channelname) const
 	else
 		return false;
 }
-

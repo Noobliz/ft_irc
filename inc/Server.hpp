@@ -44,7 +44,7 @@ class Server
 		//Client	findClient(int fd) const;
 		int		findClient(std::string nickname);
 
-		void	privateMsg(Client client, std::vector<std::string> nick, std::string msg);
+		void	privateMsg(Client & client, std::vector<std::string> nick, std::string msg);
 	private :
 
 		Server();

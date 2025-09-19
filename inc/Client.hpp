@@ -37,6 +37,10 @@ class Client
 		bool		isAuth(void) const;
 		void		setAuth(bool const auth);
 
+		void		setNickValid(bool const nv);
+		void		setPassValid(bool const pv);
+		void		setUserValid(bool const uv);
+
 		bool		isInChan(std::string const & channelname) const;
 		//! sert pour savoir si je peux envoyer le message dans le chan, mais aussi pour savoir si je dois effectuer ou non "join"
 
@@ -45,6 +49,9 @@ class Client
 		int			_fd;
 
 		//? bool		_connected;
+		bool		_nickValid;
+		bool		_passValid;
+		bool		_userValid;
 		bool		_auth;
 
 		//? c'est ca qui nous garanti que c'est unique.
