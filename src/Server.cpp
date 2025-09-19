@@ -31,17 +31,19 @@ void	Server::privateMsg(Client client, std::vector<std::string> nick, std::strin
 		ite2 = _channels.find(nick[i]);
 		if(fd >= 0)
 		{
-			send(fd, msg.c_str(), msg.size(), 0);
+			send(fd, msg.c_str(), msg.length(), 0);
 		}
 		else if (ite2 != _channels.end())
 		{
 			std::string index = (*ite2).first;
+            std::map<std::string, Client> tmp;
+            tmp = _channels[index].getConnectedClients();
 			if (client.isInChan(nick[i]))
 			{
-				
-				for (int i = 0; i < _channels[index].getConnectedClients().size(); i++)
+				std::map<std::string, Client>::iterator ite = tmp.begin();
+				for (; ite != tmp.end(); ++ite)
 				{
-					//send(channels[index].clientsList[i].getFD(), msg);
+					send((*ite).second.getFD(), msg.c_str(), msg.length(), 0);
 				}
 			}
 		}
