@@ -14,6 +14,7 @@
 #include <vector>
 #include <stack>
 #include <list>
+#include <commands.hpp>
 
 # define MAX_CLIENT 1024
 # define MAX_EVENTS 256
@@ -30,6 +31,8 @@ class Server
 		void	run(void);
 
 		int		repartitor(Client & client, std::string str);
+		void	chooseCmd(t_commandArgs &cArgs);
+		//Client	findClient(int fd) const;
 		int		findClient(std::string nickname);
 
 		void	privateMsg(Client client, std::vector<std::string> nick, std::string msg);
@@ -47,5 +50,6 @@ class Server
 
 		std::map<int, Client>			_clients;
 		std::map<std::string, Channel>	_channels;
+		std::map<std::string, void (*)(t_commandArgs&)>	_commandMap;
 
 };
