@@ -108,7 +108,6 @@ void	Server::doJoin(std::map<std::string, std::string> chanPwPair, bool resetUse
 			Channel newChan(*cArgs.client, (*it).first, (*it).second);
 			_channels[(*it).first] = newChan;
 			_channels[(*it).first].addClient(*cArgs.client);
-			_channels[(*it).first].addOperator(*cArgs.client);
 			cArgs.client->addChan((*it).first, _channels[(*it).first]);
 			send(cArgs.client->getFD(), "le channel a ete cree et porte le nom de <nom>\n", 48, 0); //! to protect
 		}

@@ -38,6 +38,8 @@ class Channel
 		int			getUserLimit(void) const;
 		void		setUserLimit(int const & ul);
 
+		bool		isOperator(Client & client);
+
 		std::map<std::string, Client>	&getConnectedClients();
 		//? j'ai besoin pour join, d'un addclient pour chacune des maps string/Client
 		void		addClient(Client & client); //! attention: verifier si invité.

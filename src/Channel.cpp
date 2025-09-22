@@ -102,6 +102,16 @@ void		Channel::setUserLimit(int const & ul)
 	_userLimit = ul;
 }
 
+bool		Channel::isOperator(Client & client)
+{
+	for (std::map<std::string, Client>::iterator it = _chanOperators.begin(); it != _chanOperators.end(); ++it)
+	{
+		if (it->first == client.getNickname())
+			return true;
+	}
+	return false;
+}
+
 //? j'ai besoin pour join, d'un addclient pour chacune des maps string/Client
 void		Channel::addClient(Client & client)
 {
@@ -110,7 +120,7 @@ void		Channel::addClient(Client & client)
 
 	if ((inviteIter != _invitedClients.end() || _inviteMode == false) && channelIter == _connectedClients.end())
 	{
-		std::cout << "JE M'INSCRI DANS LES CONNECTED du Channel" << std::endl;
+		std::cout << "JE M'INSCRIS DANS LES CONNECTED du Channel. COUCOU C'EST TIM" << std::endl;
 		_connectedClients[client.getNickname()] = client;
 	}
 	else
@@ -125,7 +135,10 @@ void		Channel::addOperator(Client & client)
 	std::map<std::string, Client>::const_iterator	operIter = _chanOperators.find(client.getNickname());
 
 	if (operIter == _chanOperators.end())
+	{
+		std::cout << "Operator sucessfully added." << std::endl;
 		_chanOperators[client.getNickname()] = client;
+	}
 }
 
 void		Channel::inviteClient(Client & client)

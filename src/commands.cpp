@@ -376,19 +376,41 @@ void	Server::invite(t_commandArgs & cArgs)
 	return ;
 }
 
+#include <cerrno>
+#include <cstdlib>
+#include <climits>
+static bool	isInt(std::string str)
+{
+	int limit;
+	errno = 0;
+	char *end = NULL;
+
+	limit = std::strtol(str.c_str(), &end, 10);
+	if (*end != '\0' || limit > INT_MAX || errno == ERANGE)
+		return false;
+	return true;
+}
+
 void	Server::mode(t_commandArgs & cArgs)
 {
-	std::string newOperator;
+	std::list<std::string> args;
 	std::string words;
+	std::string channel;
 	bool activate = true;
+	size_t requiredArgCount = 0;
 	std::map<char, bool> modes;
 	int sscount = 0;
-
 
 	while (*cArgs.sstream >> words)
 	{
 		std::cout << "words :" << words << std::endl;
 		if (sscount == 0)
+		{
+			if (words[0] != '#')
+				throw std::invalid_argument("Error: channel name has to start with #.");
+			channel = words;
+		}
+		else if (sscount == 1)
 		{
 			for (size_t i = 0; i < words.size(); i++)
 			{
@@ -420,19 +442,28 @@ void	Server::mode(t_commandArgs & cArgs)
 					throw std::invalid_argument("Error: bad arguments");
 			}
 		}
-		else if (sscount == 1)
-			newOperator = words;
 		else if (sscount > 1)
+			args.push_back(words);
+		else if (sscount > 4)
 			throw std::invalid_argument("Error: too many arguments.");
 		sscount++;
 	}
-	if (sscount < 1)
+	if (sscount < 2)
 		throw std::invalid_argument("Error: not enough arguments.");
-	if (modes.find('o') != modes.end() && newOperator == "")
-		throw std::invalid_argument("Error: missing target for operator change mode.");
-	if (modes.find('o') == modes.end() && newOperator != "")
-		throw std::invalid_argument("Error: too many arguments.");
-	std::cout << "Debug infos:" << std::endl;
+	for (std::map<char, bool>::iterator it = modes.begin(); it != modes.end(); ++it)
+	{
+		std::string switched;
+		if (it->first == 'k' || it->first == 'o' || it->first == 'l')
+		{
+			if (it->second)
+				requiredArgCount++;
+		}
+	}
+	if (requiredArgCount != args.size())
+		throw std::invalid_argument("Error: not enough arguments.");
+
+	std::cout << "Debug infos:" << std::endl; //DO NOT SUPPRESS, PARSING IN IT !
+	std::list<std::string>::iterator args_it = args.begin();
 	for (std::map<char, bool>::iterator it = modes.begin(); it != modes.end(); ++it)
 	{
 		std::string switched;
@@ -440,14 +471,28 @@ void	Server::mode(t_commandArgs & cArgs)
 			switched = "activated";
 		else
 			switched = "desactivated";
-		if (it->first == 'o')
-			std::cout << newOperator << "'s rights have been " << switched << std::endl;
-		else
-			std::cout << "Mode " << it->first << " has been " << switched << std::endl;
+		std::cout << "Mode " << it->first << " has been " << switched << std::endl;
+		if ((it->first == 'k' || it->first == 'o' || it->first == 'l') && it->second)
+		{
+			if (it->first == 'l' && !isInt(*args_it))	
+				throw std::invalid_argument("Error: argument for limit is not a number.");
+			std::cout << "Argument for " << it->first << " : " << *args_it << std::endl;
+			args_it++;
+		}
 	}
 	std::cout << std::endl;
+
 	(void)cArgs.prefix;//supress
 	(void)cArgs.hasPrefix;//supress
-	//doMode(modes, newOperator, hasPrefix, prefix);
+	//doMode(modes, args, hasPrefix, prefix);
+	//
+
+	std::map<std::string, Channel>::iterator currentChannelIt;
+	currentChannelIt = _channels.find(channel);
+	if (currentChannelIt == _channels.end())
+		throw std::invalid_argument("Error: Channel doesn't exist.");
+	if (!currentChannelIt->second.isOperator(*cArgs.client))
+		throw std::invalid_argument("Error: User is not operator.");
+	//
 	return ;
 }
