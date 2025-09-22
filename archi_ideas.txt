@@ -42,3 +42,12 @@ Parameters: <channel> [<topic>]
 
 MODE
 Parameters: <channel> {[+|-]|i|t|k|o|l} [<limit>] [<user>] [<ban mask>]
+
+Retour de German Elite :
+>> @time=2025-09-22T11:59:56.537Z :Armida.german-elite.net MODE #chanchanchan +nt
+>> :Armida.german-elite.net 353 nick1234 = #chanchanchan :@nick1234!~user1234@GE-9042C255.unyc.it
+>> :Armida.german-elite.net 366 nick1234 #chanchanchan :End of /NAMES list.
+>> :Armida.german-elite.net 324 nick1234 #chanchanchan +nt
+>> :Armida.german-elite.net 329 nick1234 #chanchanchan 1758542396
+>> :Armida.german-elite.net 354 nick1234 152 #chanchanchan ~user1234 GE-9042C255.unyc.it * nick1234 Hs@ 0 :realname
+>> :Armida.german-elite.net 315 nick1234 #chanchanchan :End of /WHO list.

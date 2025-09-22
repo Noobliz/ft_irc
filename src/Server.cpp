@@ -1,4 +1,5 @@
 #include <Server.hpp>
+#include <msgMacros.hpp>
 
 Server::Server(uint16_t const & port, std::string & password) : _port(port), _password(password)
 {
@@ -85,6 +86,7 @@ void	Server::privateMsg(Client & client, std::vector<std::string> nick, std::str
 void	Server::doJoin(std::map<std::string, std::string> chanPwPair, bool resetUserChans, t_commandArgs cArgs)
 {
 	(void)resetUserChans;
+	std::string	feedback;
 
 	for (std::map<std::string, std::string>::iterator it = chanPwPair.begin(); it != chanPwPair.end(); ++it)
 	{
@@ -96,7 +98,12 @@ void	Server::doJoin(std::map<std::string, std::string> chanPwPair, bool resetUse
 				//? attention, addClient ne rajoutera pas de client s'il est pas invité et que le server est en inviteMode
 				_channels[(*it).first].addClient(*cArgs.client);
 				cArgs.client->addChan((*it).first, _channels[(*it).first]);
-				send(cArgs.client->getFD(), "tu es bien connecte au channel <nom>\n", 38, 0); //! to protect
+				feedback = JOIN(cArgs.client->getNickname(), cArgs.client->getUserinfo().username, (*it).first);
+				feedback += RPL_NAMREPLY(cArgs.client->getNickname(), cArgs.client->getUserinfo().username, (*it).first);
+				feedback += RPL_ENDOFNAMES(cArgs.client->getNickname(), (*it).first);
+				feedback += RPL_NOTOPIC(cArgs.client->getNickname(), (*it).first);
+				send(cArgs.client->getFD(), feedback.c_str(), feedback.length(), 0);
+				feedback = "";
 			}
 			else
 			{
@@ -110,7 +117,12 @@ void	Server::doJoin(std::map<std::string, std::string> chanPwPair, bool resetUse
 			_channels[(*it).first].addClient(*cArgs.client);
 			_channels[(*it).first].addOperator(*cArgs.client);
 			cArgs.client->addChan((*it).first, _channels[(*it).first]);
-			send(cArgs.client->getFD(), "le channel a ete cree et porte le nom de <nom>\n", 48, 0); //! to protect
+			feedback = JOIN(cArgs.client->getNickname(), cArgs.client->getUserinfo().username, (*it).first);
+			feedback += RPL_NAMREPLY(cArgs.client->getNickname(), cArgs.client->getUserinfo().username, (*it).first);
+			feedback += RPL_ENDOFNAMES(cArgs.client->getNickname(), (*it).first);
+			feedback += RPL_NOTOPIC(cArgs.client->getNickname(), (*it).first);
+			send(cArgs.client->getFD(), feedback.c_str(), feedback.length(), 0);
+			feedback = "";
 		}
 	}
 	/* accusé de réception ? */
