@@ -36,7 +36,6 @@ void	Server::privateMsg(Client & client, std::vector<std::string> nick, std::str
 	std::map<std::string, Channel>::iterator ite2;
 	int fd;
 
-	//! lise : ajoute une verif si le client est bien auth.
 	for(size_t i = 0; i < nick.size(); i++)
 	{
 		fd = findClient(nick[i]);
@@ -49,7 +48,7 @@ void	Server::privateMsg(Client & client, std::vector<std::string> nick, std::str
 				send(fd, "\n", 2, 0);
 			}
 			else
-				send(client.getFD(), "non non non le destinataire est pas auth\n", 29, 0);
+				send(client.getFD(), "non non non le destinataire est pas auth\n", 42, 0);
 		}
 		else if (ite2 != _channels.end())
 		{
@@ -97,7 +96,11 @@ void	Server::doJoin(std::map<std::string, std::string> chanPwPair, bool resetUse
 				//? attention, addClient ne rajoutera pas de client s'il est pas invité et que le server est en inviteMode
 				_channels[(*it).first].addClient(*cArgs.client);
 				cArgs.client->addChan((*it).first, _channels[(*it).first]);
-				send(cArgs.client->getFD(), "tu es bien connecte au channel <nom>\n", 38, 0);
+				send(cArgs.client->getFD(), "tu es bien connecte au channel <nom>\n", 38, 0); //! to protect
+			}
+			else
+			{
+				//! err bad pass
 			}
 		}
 		else
@@ -105,8 +108,9 @@ void	Server::doJoin(std::map<std::string, std::string> chanPwPair, bool resetUse
 			Channel newChan(*cArgs.client, (*it).first, (*it).second);
 			_channels[(*it).first] = newChan;
 			_channels[(*it).first].addClient(*cArgs.client);
+			_channels[(*it).first].addOperator(*cArgs.client);
 			cArgs.client->addChan((*it).first, _channels[(*it).first]);
-			send(cArgs.client->getFD(), "le channel a ete cree et porte le nom de <nom>\n", 48, 0);
+			send(cArgs.client->getFD(), "le channel a ete cree et porte le nom de <nom>\n", 48, 0); //! to protect
 		}
 	}
 	/* accusé de réception ? */
