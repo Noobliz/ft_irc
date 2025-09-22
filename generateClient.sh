@@ -1,1 +1,1 @@
-(printf "PASS $1\nNICK $2\nUSER u s e r\nJOIN #chan1\n"; cat) | nc localhost 9999
+(printf "PASS $1\r\nNICK $2\r\nUSER u s e :r v\r\nJOIN #chan1\r\n"; cat) | nc -C localhost 9999

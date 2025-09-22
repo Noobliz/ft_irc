@@ -28,10 +28,12 @@ void	Server::user(t_commandArgs & cArgs)
 				std::stringstream msgSStream(userinfos.realname);
 				std::getline(msgSStream, userinfos.realname, ':');
 				std::getline(msgSStream, userinfos.realname);
+				userinfos.realname.append("\n");
 				sscount++;
 				break;
 			}
 			userinfos.realname = words;
+			userinfos.realname.append("\n");
 		}
 		else if(sscount > 3)
 			throw std::invalid_argument("Error: too many arguments.");
@@ -78,10 +80,12 @@ void	Server::topic(t_commandArgs & cArgs)
 				std::stringstream msgSStream(msg);
 				std::getline(msgSStream, msg, ':');
 				std::getline(msgSStream, msg);
+				msg.append("\n");
 				sscount++;
 				break;
 			}
 			msg = words;
+			msg.append("\n");
 		}
 		else if (sscount == 2)
 			throw std::invalid_argument("Error: too many arguments.");
@@ -126,6 +130,7 @@ void	Server::privmsg(t_commandArgs & cArgs)
 				std::stringstream msgSStream(msg);
 				std::getline(msgSStream, msg, ':');
 				std::getline(msgSStream, msg);
+				msg.append("\n");
 				sscount++;
 				break;
 			}
@@ -240,10 +245,12 @@ void	Server::kick(t_commandArgs & cArgs)
 				std::stringstream msgSStream(msg);
 				std::getline(msgSStream, msg, ':');
 				std::getline(msgSStream, msg);
+				msg.append("\n");
 				sscount++;
 				break;
 			}
 			msg = words;
+			msg.append("\n");
 		}
 		else if (sscount == 3)
 			throw std::invalid_argument("Error: too many arguments.");

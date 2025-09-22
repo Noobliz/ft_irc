@@ -45,7 +45,7 @@ void	Server::privateMsg(Client & client, std::vector<std::string> nick, std::str
 			if (_clients[fd].isAuth())
 			{
 				send(fd, msg.c_str(), msg.length(), 0);
-				send(fd, "\n", 2, 0);
+				//send(fd, "\n", 2, 0);
 			}
 			else
 				send(client.getFD(), "non non non le destinataire est pas auth\n", 42, 0);
@@ -65,7 +65,7 @@ void	Server::privateMsg(Client & client, std::vector<std::string> nick, std::str
 				for (; ite != tmp.end(); ++ite)
 				{
 					send((*ite).second.getFD(), msg.c_str(), msg.length(), 0);
-					send(fd, "\n", 2, 0);
+					//send(fd, "\n", 2, 0);
 				}
 			}
 		}
@@ -244,6 +244,8 @@ void	Server::run(void)
 	if (epoll_ctl(_epollfd, EPOLL_CTL_ADD, _sockfd, &_ev) == -1)
 		throw std::invalid_argument("Error: epoll_ctl fail");
 
+	// signal(SIGINT, &sigHandler);
+	// signal(SIGQUIT, &sigHandler);
 	while (1)
 	{
 		int	n = epoll_wait(_epollfd, _events, MAX_EVENTS, -1);

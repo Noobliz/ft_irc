@@ -13,6 +13,7 @@
 #include <vector>
 #include <stack>
 #include <list>
+#include <signal.h>
 
 #include <Client.hpp>
 #include <Channel.hpp>
