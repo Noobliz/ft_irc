@@ -1,58 +1,6 @@
 #include <Server.hpp>
 
-void	Server::user(t_commandArgs & cArgs)
-{
-	t_userinfos userinfos;
-	std::string words;
-	int sscount = 0;
-	std::streampos ssPos;
 
-
-	while (*cArgs.sstream >> words)
-	{
-		std::cout << "words :" << words << std::endl;
-		if (sscount == 0)
-			userinfos.username = words;
-		else if (sscount == 1)
-			userinfos.hostname = words;
-		else if (sscount == 2)
-		{
-			userinfos.servername = words;
-			ssPos = cArgs.sstream->tellg();
-		}
-		else if (sscount == 3)
-		{
-			if (words[0] == ':')
-			{
-				userinfos.realname = (cArgs.sstream->str()).substr(ssPos);//sstream ou *sstream ? :(
-				std::stringstream msgSStream(userinfos.realname);
-				std::getline(msgSStream, userinfos.realname, ':');
-				std::getline(msgSStream, userinfos.realname);
-				userinfos.realname.append("\n");
-				sscount++;
-				break;
-			}
-			userinfos.realname = words;
-			userinfos.realname.append("\n");
-		}
-		else if(sscount > 3)
-			throw std::invalid_argument("Error: too many arguments.");
-		sscount++;
-	}
-	if (sscount != 4)
-		throw std::invalid_argument("Error: not enough arguments.");
-	// std::cout << "Debug infos:" << std::endl;
-	// std::cout << "username:" << userinfos.username << std::endl;
-	// std::cout << "hostname:" << userinfos.hostname << std::endl;
-	// std::cout << "servername:" << userinfos.servername << std::endl;
-	// std::cout << "realname:" << userinfos.realname << std::endl;
-	// std::cout << std::endl;
-	//! attention parsing char interdits/speciaux
-	cArgs.client->setUserinfo(userinfos);
-	cArgs.client->setUserValid(true);
-	//doUser(userinfos, hasPrefix, prefix);
-	return ;
-}
 
 void	Server::topic(t_commandArgs & cArgs)
 {
@@ -158,61 +106,9 @@ void	Server::privmsg(t_commandArgs & cArgs)
 	privateMsg(*cArgs.client, msgTarget, msg);
 }
 
-void	Server::pass(t_commandArgs & cArgs)
-{
-	std::string password;
-	std::string words;
-	int sscount = 0;
 
-	while (*cArgs.sstream >> words)
-	{
-		std::cout << "words :" << words << std::endl;
-		if (sscount == 0)
-			password = words;
-		else if (sscount > 0)
-			throw std::invalid_argument("Error: too many arguments.");
-		sscount++;
-	}
-	if (sscount != 1)
-		throw std::invalid_argument("Error: not enough arguments.");
-	// std::cout << "Debug infos:" << std::endl;
-	// std::cout << "Password:" << password << std::endl;
-	// std::cout << std::endl;
-	if (_password == password)
-		cArgs.client->setPassValid(true);
-}
 
-void	Server::nick(t_commandArgs & cArgs)
-{
-	std::string nick;
-	std::string words;
-	int sscount = 0;
 
-	while (*cArgs.sstream >> words)
-	{
-		std::cout << "words :" << words << std::endl;
-		if (sscount == 0)
-			nick = words;
-		else if (sscount > 0)
-			throw std::invalid_argument("Error: too many arguments.");
-		sscount++;
-	}
-	if (sscount != 1)
-		throw std::invalid_argument("Error: not enough arguments.");
-	// std::cout << "Debug infos:" << std::endl;
-	// std::cout << "Nick:" << nick << std::endl;
-	// std::cout << std::endl;
-
-	//! attention au parsing des char speciaux / interdits
-
-	if (findClient(nick) != -2)
-	{
-		throw std::invalid_argument("Error: nickname already used.");
-	}
-	cArgs.client->setNickname(nick);
-	cArgs.client->setNickValid(true);
-	return ;
-}
 
 void	Server::kick(t_commandArgs & cArgs)
 {

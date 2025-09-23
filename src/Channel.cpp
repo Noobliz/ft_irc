@@ -3,10 +3,12 @@
 Channel::Channel() :
 	_name(),
 	_inviteMode(false),
-	_password()
+	_password(),
+	_userLimit(0)
 {}
 
 Channel::Channel(Channel const & copy) { *this = copy; }
+
 Channel	&Channel::operator=(Channel const & other)
 {
 	if (this != &other)
@@ -32,7 +34,8 @@ Channel::~Channel()
 Channel::Channel(Client & client, std::string name, std::string pass) :
 	_name(name),
 	_inviteMode(false),
-	_password(pass)
+	_password(pass),
+	_userLimit(0)
 {
 	addOperator(client);
 }
@@ -105,20 +108,13 @@ void		Channel::setUserLimit(int const & ul)
 //? j'ai besoin pour join, d'un addclient pour chacune des maps string/Client
 void		Channel::addClient(Client & client)
 {
-	std::map<std::string, Client>::const_iterator	inviteIter = _invitedClients.find(client.getNickname());
 	std::map<std::string, Client>::const_iterator	channelIter = _connectedClients.find(client.getNickname());
 
-	if ((inviteIter != _invitedClients.end() || _inviteMode == false) && channelIter == _connectedClients.end())
+	if (channelIter == _connectedClients.end())
 	{
-		std::cout << "JE M'INSCRI DANS LES CONNECTED du Channel" << std::endl;
 		_connectedClients[client.getNickname()] = client;
 	}
-	else
-	{
-		std::cout << "euh, je suis pas dans le channel moi..." << std::endl;
-		//? message d'erreur ?????????? feedback sur server ??????
-	}
-} //! attention: verifier si invité.
+}
 
 void		Channel::addOperator(Client & client)
 {
@@ -139,4 +135,22 @@ void		Channel::inviteClient(Client & client)
 std::map<std::string, Client>	&Channel::getConnectedClients()
 {
 	return _connectedClients;
+}
+
+bool		Channel::isFull(void) const
+{
+	if (_userLimit >= static_cast<int>(_connectedClients.size()))
+		return true;
+	return false;
+}
+
+bool		Channel::isInvited(Client & client) const
+{
+	std::map<std::string, Client>::const_iterator	inviteIter = _invitedClients.find(client.getNickname());
+
+	if (inviteIter != _invitedClients.end())
+	{
+		return true;
+	}
+	return false;
 }

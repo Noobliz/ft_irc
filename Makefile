@@ -9,6 +9,9 @@ SRC =	main.cpp				\
 		src/Client.cpp			\
 		src/Channel.cpp			\
 		src/commands/join.cpp	\
+		src/commands/pass.cpp	\
+		src/commands/user.cpp	\
+		src/commands/nick.cpp	\
 
 OBJDIR = .obj/
 OBJ = $(addprefix $(OBJDIR),$(SRC:.cpp=.o))

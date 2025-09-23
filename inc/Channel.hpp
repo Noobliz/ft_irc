@@ -44,6 +44,9 @@ class Channel
 		void		addOperator(Client & client);
 		void		inviteClient(Client & client);
 
+		bool		isInvited(Client & client) const;
+		bool		isFull(void) const;
+
 	private:
 
 		std::string						_name;
