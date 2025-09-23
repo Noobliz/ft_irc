@@ -288,39 +288,6 @@ void	Server::join(t_commandArgs & cArgs)
 	return ;
 }
 
-void	Server::invite(t_commandArgs & cArgs)
-{
-	std::string target;
-	std::string channel;
-	std::string words;
-	int sscount = 0;
-
-	while (*cArgs.sstream >> words)
-	{
-		std::cout << "words :" << words << std::endl;
-		if (sscount == 0)
-			target = words;
-		else if (sscount == 1)
-		{
-			if (words[0] != '#')
-				throw std::invalid_argument("Error: channel name has to start with #.");
-			channel = words;
-		}
-		else if (sscount > 1)
-			throw std::invalid_argument("Error: too many arguments.");
-		sscount++;
-	}
-	if (sscount != 2)
-		throw std::invalid_argument("Error: not enough arguments.");
-	std::cout << "Debug infos:" << std::endl;
-	std::cout << "Target:" << target << std::endl;
-	std::cout << "Channel:" << channel << std::endl;
-	std::cout << std::endl;
-	(void)cArgs.prefix;//supress
-	(void)cArgs.hasPrefix;//supress
-	//doInvite(target, channel, hasPrefix, prefix);
-	return ;
-}
 
 void	Server::mode(t_commandArgs & cArgs)
 {

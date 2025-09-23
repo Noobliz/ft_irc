@@ -79,6 +79,7 @@ void	Server::doPrivateMsg(Client & client, std::vector<std::string> nick, std::s
 		feedback = NO_TEXTOSEND(client.getNickname());
 		if (send(client.getFD(), feedback.c_str(), feedback.length(), 0) == -1)
 			throw std::runtime_error("send() failed");
+		return ;
 	}
 
 	for(size_t i = 0; i < nick.size(); i++)

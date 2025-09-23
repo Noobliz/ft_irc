@@ -130,13 +130,23 @@ void		Channel::addOperator(Client & client)
 
 void		Channel::inviteClient(Client & client)
 {
-	std::map<std::string, Client>::const_iterator	inviteIter = _invitedClients.find(client.getNickname());
+	//std::map<std::string, Client>::const_iterator	inviteIter = _invitedClients.find(client.getNickname());
 
-	if (inviteIter == _invitedClients.end() && _inviteMode == true)
+	//if (inviteIter == _invitedClients.end() && _inviteMode == true)
 		_invitedClients[client.getNickname()] = client;
 }
 
 std::map<std::string, Client>	&Channel::getConnectedClients()
 {
 	return _connectedClients;
+}
+
+std::map<std::string, Client>	Channel::getOpperators()const
+{
+	return _chanOperators;
+}
+
+std::map<std::string, Client>	Channel::getInvitedClient()const
+{
+	return _invitedClients;
 }
