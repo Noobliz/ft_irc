@@ -1,5 +1,4 @@
 #include <Server.hpp>
-#include <msgMacros.hpp>
 
 Server::Server(uint16_t const & port, std::string & password) : _port(port), _password(password)
 {
@@ -83,50 +82,6 @@ void	Server::privateMsg(Client & client, std::vector<std::string> nick, std::str
 
 }
 
-void	Server::doJoin(std::map<std::string, std::string> chanPwPair, bool resetUserChans, t_commandArgs cArgs)
-{
-	(void)resetUserChans;
-	std::string	feedback;
-
-	for (std::map<std::string, std::string>::iterator it = chanPwPair.begin(); it != chanPwPair.end(); ++it)
-	{
-		std::map<std::string, Channel>::iterator cit = _channels.find((*it).first);
-		if (cit != _channels.end())
-		{
-			if (_channels[(*it).first].checkPassword((*it).second))
-			{
-				//? attention, addClient ne rajoutera pas de client s'il est pas invité et que le server est en inviteMode
-				_channels[(*it).first].addClient(*cArgs.client);
-				cArgs.client->addChan((*it).first, _channels[(*it).first]);
-				feedback = JOIN(cArgs.client->getNickname(), cArgs.client->getUserinfo().username, (*it).first);
-				feedback += RPL_NAMREPLY(cArgs.client->getNickname(), cArgs.client->getUserinfo().username, (*it).first);
-				feedback += RPL_ENDOFNAMES(cArgs.client->getNickname(), (*it).first);
-				feedback += RPL_NOTOPIC(cArgs.client->getNickname(), (*it).first);
-				send(cArgs.client->getFD(), feedback.c_str(), feedback.length(), 0);
-				feedback = "";
-			}
-			else
-			{
-				//! err bad pass
-			}
-		}
-		else
-		{
-			Channel newChan(*cArgs.client, (*it).first, (*it).second);
-			_channels[(*it).first] = newChan;
-			_channels[(*it).first].addClient(*cArgs.client);
-			_channels[(*it).first].addOperator(*cArgs.client);
-			cArgs.client->addChan((*it).first, _channels[(*it).first]);
-			feedback = JOIN(cArgs.client->getNickname(), cArgs.client->getUserinfo().username, (*it).first);
-			feedback += RPL_NAMREPLY(cArgs.client->getNickname(), cArgs.client->getUserinfo().username, (*it).first);
-			feedback += RPL_ENDOFNAMES(cArgs.client->getNickname(), (*it).first);
-			feedback += RPL_NOTOPIC(cArgs.client->getNickname(), (*it).first);
-			send(cArgs.client->getFD(), feedback.c_str(), feedback.length(), 0);
-			feedback = "";
-		}
-	}
-	/* accusé de réception ? */
-}
 
 static std::string getPrefix(std::stringstream *sstream, bool *hasPrefix)
 {

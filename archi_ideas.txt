@@ -51,3 +51,9 @@ Retour de German Elite :
 >> :Armida.german-elite.net 329 nick1234 #chanchanchan 1758542396
 >> :Armida.german-elite.net 354 nick1234 152 #chanchanchan ~user1234 GE-9042C255.unyc.it * nick1234 Hs@ 0 :realname
 >> :Armida.german-elite.net 315 nick1234 #chanchanchan :End of /WHO list.
+
+il faut que tout le monde le recoive
+>> @time=2025-09-23T09:21:13.217Z :rick1234!~oser1234@GE-9042C255.unyc.it JOIN #chan1 * :realname
+
+ca c'est que pour le client qui join le chan
+>> :Armida.german-elite.net 353 rick1234 = #chan1 :rick1234!~oser1234@GE-9042C255.unyc.it @nick1234!~user1234@GE-9042C255.unyc.it

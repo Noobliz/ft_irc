@@ -5,9 +5,10 @@
 
 # define END "\r\n"
 
-# define UINFO(nick, user) (":" + nick + "!~" + user + "@localhost")
+# define UINFO(nick, user) (nick + "!~" + user + "@localhost")
 
-# define JOIN(nick, user, channel) (UINFO(nick, user) + " JOIN " + channel + END)
-# define RPL_NAMREPLY(nick, user, channel) (":Lisautim.serv.42network 353 " + nick + " = " + channel + " " + UINFO(nick, user) + END)
-# define RPL_ENDOFNAMES(nick, channel) (":Lisautim.serv.42network 366 " + nick + " " + channel + " :End of /NAMES list." + END)
-# define RPL_NOTOPIC(nick, channel) (":Lisautim.serv.42network 331 " + nick + channel + " :test." + END)
+# define JOIN(nick, user, channel) (":" + UINFO(nick, user) + " JOIN " + channel + END)
+# define RPL_NAMREPLY(nick, channel) (":Lisautim 353 " + nick + " = " + channel + " :")
+# define RPL_ENDOFNAMES(nick, channel) (":Lisautim 366 " + nick + " " + channel + " :End of /NAMES list." + END)
+# define RPL_NOTOPIC(nick, channel) (":Lisautim 331 " + nick + " " + channel + " :No topic is set" + END)
+# define RPL_TOPIC(nick, channel, topic) (":Lisautim 332 " + nick + " " + channel + " :" + topic + END)
