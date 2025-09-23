@@ -77,8 +77,8 @@ void	Server::doPrivateMsg(Client & client, std::vector<std::string> nick, std::s
 	if (msg.empty()) // pas utile ?
 	{
 		feedback = NO_TEXTOSEND(client.getNickname());
-		send(client.getFD(), feedback.c_str(), feedback.length(), 0);
-		return ;
+		if (send(client.getFD(), feedback.c_str(), feedback.length(), 0) == -1)
+			throw std::runtime_error("send() failed");
 	}
 
 	for(size_t i = 0; i < nick.size(); i++)
@@ -90,7 +90,8 @@ void	Server::doPrivateMsg(Client & client, std::vector<std::string> nick, std::s
 			if (_clients[fd].isAuth())
 			{
 				feedback = PRIVMSG(client.getNickname(), client.getUserinfo().username, _clients[fd].getNickname(), msg);
-				send(fd, feedback.c_str(), feedback.length(), 0);
+				if (send(fd, feedback.c_str(), feedback.length(), 0) == -1)
+					throw std::runtime_error("send() failed");
 				feedback = "";
 			}
 		}
@@ -110,15 +111,18 @@ void	Server::doPrivateMsg(Client & client, std::vector<std::string> nick, std::s
 				{
 					feedback = PRIVMSG(client.getNickname(), client.getUserinfo().username, nick[i], msg);
 					if ((*ite).second.getNickname() != client.getNickname())
-						send((*ite).second.getFD(), feedback.c_str(), feedback.length(), 0);
+					{
+						if (send((*ite).second.getFD(), feedback.c_str(), feedback.length(), 0) == -1)
+							throw std::runtime_error("send() failed");
+					}
 					feedback = "";
-					//send(fd, "\n", 2, 0);
 				}
 			}
 			else
 			{
 				feedback = ERR_CANNOTSENDTOCHAN(client.getNickname(), nick[i]);
-				send(client.getFD(), feedback.c_str(), feedback.length(), 0);
+				if (send(client.getFD(), feedback.c_str(), feedback.length(), 0) == -1)
+					throw std::runtime_error("send() failed");
 				feedback = "";
 			}
 		}
@@ -126,7 +130,8 @@ void	Server::doPrivateMsg(Client & client, std::vector<std::string> nick, std::s
 		{
 
 			feedback = ERR_NOSUCHNICK(client.getNickname(), nick[i]);
-			send(client.getFD(), feedback.c_str(), feedback.length(), 0);
+			if (send(client.getFD(), feedback.c_str(), feedback.length(), 0) == -1)
+				throw std::runtime_error("send() failed");
 			feedback = "";
 		}
 	}
