@@ -1,5 +1,6 @@
 #include <Server.hpp>
 #include <msgMacros.hpp>
+#include <protocolMsg.hpp>
 
 Server::Server(uint16_t const & port, std::string & password) : _port(port), _password(password)
 {
@@ -36,6 +37,7 @@ void	Server::privateMsg(Client & client, std::vector<std::string> nick, std::str
 {
 	std::map<std::string, Channel>::iterator ite2;
 	int fd;
+	std::string feedback;
 
 	for(size_t i = 0; i < nick.size(); i++)
 	{
@@ -45,11 +47,12 @@ void	Server::privateMsg(Client & client, std::vector<std::string> nick, std::str
 		{
 			if (_clients[fd].isAuth())
 			{
-				send(fd, msg.c_str(), msg.length(), 0);
-				//send(fd, "\n", 2, 0);
+				feedback = PRIVMSG(client.getNickname(), client.getUserinfo().username, _clients[fd].getNickname(), msg);
+				send(fd, feedback.c_str(), feedback.length(), 0);
+				feedback = "";
 			}
-			else
-				send(client.getFD(), "non non non le destinataire est pas auth\n", 42, 0);
+			// else
+			// 	send(client.getFD(), "non non non le destinataire est pas auth\n", 42, 0);
 		}
 		else if (ite2 != _channels.end())
 		{
@@ -65,14 +68,26 @@ void	Server::privateMsg(Client & client, std::vector<std::string> nick, std::str
 				std::map<std::string, Client>::iterator ite = tmp.begin();
 				for (; ite != tmp.end(); ++ite)
 				{
-					send((*ite).second.getFD(), msg.c_str(), msg.length(), 0);
+					feedback = PRIVMSG(client.getNickname(), client.getUserinfo().username, nick[i], msg);
+					if ((*ite).second.getNickname() != client.getNickname())
+						send((*ite).second.getFD(), feedback.c_str(), feedback.length(), 0);
+					feedback = "";
 					//send(fd, "\n", 2, 0);
 				}
+			}
+			else
+			{
+				feedback = ERR_CANNOTSENDTOCHAN(client.getNickname(), nick[i]);
+				send(client.getFD(), feedback.c_str(), feedback.length(), 0);
+				feedback = "";
 			}
 		}
 		else
 		{
-			send(client.getFD(), "probleme\n", 10, 0);
+
+			feedback = ERR_NOSUCHNICK(client.getNickname(), nick[i]);
+			send(client.getFD(), feedback.c_str(), feedback.length(), 0);
+			feedback = "";
 		// 	ERR_NORECIPIENT                 ERR_NOTEXTTOSEND
         //    ERR_CANNOTSENDTOCHAN            ERR_NOTOPLEVEL
         //    ERR_WILDTOPLEVEL                ERR_TOOMANYTARGETS
