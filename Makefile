@@ -8,6 +8,7 @@ SRC =	main.cpp		\
 		src/commands.cpp	\
 		src/Client.cpp	\
 		src/Channel.cpp	\
+		src/privmsg.cpp
 
 OBJDIR = .obj/
 OBJ = $(addprefix $(OBJDIR),$(SRC:.cpp=.o))

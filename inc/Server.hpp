@@ -45,7 +45,7 @@ class Server
 		//Client	findClient(int fd) const;
 		int		findClient(std::string nickname);
 
-		void	privateMsg(Client & client, std::vector<std::string> nick, std::string msg);
+		void	doPrivateMsg(Client & client, std::vector<std::string> nick, std::string msg);
 		void	doJoin(std::map<std::string, std::string> chanPwPair, bool resetUserChans, t_commandArgs cArgs);
 
 	private :

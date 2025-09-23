@@ -7,7 +7,7 @@
 //:server <code numérique> <nick> <cible> :<explication>
 
 #define PRIVMSG(nick, user, target, msg) \
-(UINFO(nick, user) + " PRIVMSG " + target + " :" + msg + END)
+(UINFO(nick, user) + " PRIVMSG " + target + " " + msg + END)
 
 #define SERV() std::string \
 (":Lisautim.serv.42network")
@@ -19,4 +19,6 @@
 (SERV() + " 404 " + nick + " " + channel + " :Cannot send to channel" + END)
 
 //no_recipient
-//no_texttosend
+
+#define NO_TEXTOSEND(nick) \
+(SERV() + " 412 " + nick + " :No text to send" + END)
