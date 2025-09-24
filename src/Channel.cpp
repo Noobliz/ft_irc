@@ -112,6 +112,24 @@ bool		Channel::isOperator(Client & client)
 	return false;
 }
 
+bool        Channel::isFull(void) const
+{
+    if (_userLimit >= static_cast<int>(_connectedClients.size()))
+        return true;
+    return false;
+}
+
+bool        Channel::isInvited(Client & client) const
+{
+    std::map<std::string, Client>::const_iterator    inviteIter = _invitedClients.find(client.getNickname());
+
+    if (inviteIter != _invitedClients.end())
+    {
+        return true;
+    }
+    return false;
+}
+
 //? j'ai besoin pour join, d'un addclient pour chacune des maps string/Client
 void		Channel::addClient(Client & client)
 {
@@ -138,6 +156,17 @@ void		Channel::addOperator(Client & client)
 	{
 		std::cout << "Operator sucessfully added." << std::endl;
 		_chanOperators[client.getNickname()] = client;
+	}
+}
+
+void		Channel::removeOperator(Client & client)
+{
+	std::map<std::string, Client>::iterator	operIter = _chanOperators.find(client.getNickname());
+
+	if (operIter != _chanOperators.end())
+	{
+		std::cout << "Operator sucessfully removed." << std::endl;
+		_chanOperators.erase(operIter);
 	}
 }
 
