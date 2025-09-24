@@ -19,69 +19,6 @@ Server::~Server()
 	close(_epollfd);
 }
 
-int	Server::findClient(std::string nickname)
-{
-	//std::map<int, Client>::iterator ite = _clients.begin();
-
-	for (size_t i = 0; i < _clients.size(); i++)
-	{
-		if (_clients[i].getNickname() == nickname)
-			return _clients[i].getFD();
-	}
-	return (-2);
-}
-
-void	Server::privateMsg(Client & client, std::vector<std::string> nick, std::string msg)
-{
-	std::map<std::string, Channel>::iterator ite2;
-	int fd;
-
-	for(size_t i = 0; i < nick.size(); i++)
-	{
-		fd = findClient(nick[i]);
-		ite2 = _channels.find(nick[i]);
-		if(fd >= 0)
-		{
-			if (_clients[fd].isAuth())
-			{
-				send(fd, msg.c_str(), msg.length(), 0);
-				//send(fd, "\n", 2, 0);
-			}
-			else
-				send(client.getFD(), "non non non le destinataire est pas auth\n", 42, 0);
-		}
-		else if (ite2 != _channels.end())
-		{
-			std::cout << "J'ESSAIE D'ENVOYER UN MESSAGE DANS UN CHANNEL" << std::endl;
-
-			std::string index = (*ite2).first;
-            std::map<std::string, Client> tmp;
-            tmp = _channels[index].getConnectedClients();
-			if (client.isInChan(nick[i]))
-			{
-				std::cout << "JE SUIS BIEN DANS LE CHANNEL DONC JE PEUX" << std::endl;
-
-				std::map<std::string, Client>::iterator ite = tmp.begin();
-				for (; ite != tmp.end(); ++ite)
-				{
-					send((*ite).second.getFD(), msg.c_str(), msg.length(), 0);
-					//send(fd, "\n", 2, 0);
-				}
-			}
-		}
-		else
-		{
-			send(client.getFD(), "probleme\n", 10, 0);
-		// 	ERR_NORECIPIENT                 ERR_NOTEXTTOSEND
-        //    ERR_CANNOTSENDTOCHAN            ERR_NOTOPLEVEL
-        //    ERR_WILDTOPLEVEL                ERR_TOOMANYTARGETS
-        //    ERR_NOSUCHNICK
-        //    RPL_AWAY
-		}
-	}
-
-}
-
 
 static std::string getPrefix(std::stringstream *sstream, bool *hasPrefix)
 {

@@ -18,6 +18,7 @@
 #include <Client.hpp>
 #include <Channel.hpp>
 #include <msgMacros.hpp>
+#include <protocolMsg.hpp>
 
 # define MAX_CLIENT 1024
 # define MAX_EVENTS 256
@@ -46,9 +47,10 @@ class Server
 		//Client	findClient(int fd) const;
 		int		findClient(std::string nickname);
 
-		void	privateMsg(Client & client, std::vector<std::string> nick, std::string msg);
+		void	doPrivateMsg(Client & client, std::vector<std::string> nick, std::string msg);
 		void	doJoin(std::map<std::string, std::string> chanPwPair, bool resetUserChans, t_commandArgs cArgs);
 		void	doTopic(t_commandArgs & cArgs, std::string & channelname, std::string & topic);
+		void	doInvite(Client client, std::string const & target, std::string const &channel);
 
 	private :
 

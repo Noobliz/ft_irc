@@ -3,16 +3,18 @@ CXXFLAGS = -Wall -Wextra -Werror -std=c++98 -g
 
 NAME = ircserv
 
-SRC =	main.cpp				\
-		src/Server.cpp			\
-		src/commands.cpp		\
-		src/Client.cpp			\
-		src/Channel.cpp			\
-		src/commands/join.cpp	\
-		src/commands/pass.cpp	\
-		src/commands/user.cpp	\
-		src/commands/nick.cpp	\
-		src/commands/topic.cpp	\
+SRC =	main.cpp					\
+		src/Server.cpp				\
+		src/commands.cpp			\
+		src/Client.cpp				\
+		src/Channel.cpp				\
+		src/commands/join.cpp		\
+		src/commands/pass.cpp		\
+		src/commands/user.cpp		\
+		src/commands/nick.cpp		\
+		src/commands/topic.cpp		\
+		src/commands/privmsg.cpp	\
+		src/commands/invite.cpp		\
 
 OBJDIR = .obj/
 OBJ = $(addprefix $(OBJDIR),$(SRC:.cpp=.o))
