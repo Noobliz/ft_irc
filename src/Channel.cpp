@@ -105,6 +105,34 @@ void		Channel::setUserLimit(int const & ul)
 	_userLimit = ul;
 }
 
+bool		Channel::isOperator(Client & client)
+{
+	for (std::map<std::string, Client>::iterator it = _chanOperators.begin(); it != _chanOperators.end(); ++it)
+	{
+		if (it->first == client.getNickname())
+			return true;
+	}
+	return false;
+}
+
+bool        Channel::isFull(void) const
+{
+    if (_userLimit >= static_cast<int>(_connectedClients.size()))
+        return true;
+    return false;
+}
+
+bool        Channel::isInvited(Client & client) const
+{
+    std::map<std::string, Client>::const_iterator    inviteIter = _invitedClients.find(client.getNickname());
+
+    if (inviteIter != _invitedClients.end())
+    {
+        return true;
+    }
+    return false;
+}
+
 void		Channel::addClient(Client & client)
 {
 	std::map<std::string, Client>::const_iterator	channelIter = _connectedClients.find(client.getNickname());
@@ -120,7 +148,21 @@ void		Channel::addOperator(Client & client)
 	std::map<std::string, Client>::const_iterator	operIter = _chanOperators.find(client.getNickname());
 
 	if (operIter == _chanOperators.end())
+	{
+		std::cout << "Operator sucessfully added." << std::endl;
 		_chanOperators[client.getNickname()] = client;
+	}
+}
+
+void		Channel::removeOperator(Client & client)
+{
+	std::map<std::string, Client>::iterator	operIter = _chanOperators.find(client.getNickname());
+
+	if (operIter != _chanOperators.end())
+	{
+		std::cout << "Operator sucessfully removed." << std::endl;
+		_chanOperators.erase(operIter);
+	}
 }
 
 void		Channel::inviteClient(Client & client)

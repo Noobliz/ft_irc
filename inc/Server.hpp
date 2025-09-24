@@ -15,6 +15,10 @@
 #include <list>
 #include <signal.h>
 
+#include <cerrno>
+#include <cstdlib>
+#include <climits>
+
 #include <Client.hpp>
 #include <Channel.hpp>
 #include <msgMacros.hpp>
