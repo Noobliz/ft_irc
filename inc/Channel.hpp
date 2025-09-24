@@ -46,6 +46,7 @@ class Channel
 
 		bool		isInvited(Client & client) const;
 		bool		isFull(void) const;
+		bool		isOperator(Client & client) const;
 
 	private:
 

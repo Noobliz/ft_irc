@@ -107,6 +107,8 @@ void	Server::chooseCmd(t_commandArgs & cArgs)
 	}
 	else
 	{
+		//! attention feedback au client
+		//! @time=2025-09-24T07:18:11.459Z :coven.IRC4Fun.net 421 rick1234 TOPIVC :Unknown command
 		throw std::invalid_argument("Error: unknown command");
 	}
 
