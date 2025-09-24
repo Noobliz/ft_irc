@@ -1,26 +1,34 @@
 #include <Server.hpp>
 
-static bool	isInt(std::string str)
-{
-	int limit;
-	errno = 0;
-	char *end = NULL;
+// static bool	isInt(std::string str)
+// {
+// 	int limit;
+// 	errno = 0;
+// 	char *end = NULL;
 
-	limit = std::strtol(str.c_str(), &end, 10);
-	if (*end != '\0' || limit > INT_MAX || errno == ERANGE)
-		return false;
-	return true;
-}
+// 	limit = std::strtol(str.c_str(), &end, 10);
+// 	if (*end != '\0' || limit > INT_MAX || errno == ERANGE)
+// 		return false;
+// 	return true;
+// }
+
+/*
+!ERR_UNKNOWNMODE (472)
+
+!  "<client> <modechar> :is unknown mode char to me"
+
+!Indicates that a mode character used by a client is not recognized by the server. The text used in the last param of this message may vary.
+*/
 
 void	Server::mode(t_commandArgs & cArgs)
 {
-	std::string 						word;
-	std::string 						args;
-	bool 								activate = true;
-	bool 								hasSign = false;
-	int 								sscount = 0;
-	std::map<std::string, std::string>	changes;
-	std::map<std::string, Channel>::iterator currentChannelIt;
+	std::string	word;
+	std::string	args;
+	bool		activate = true;
+	bool		hasSign = false;
+	int			sscount = 0;
+	std::map<std::string, std::string>			changes;
+	std::map<std::string, Channel>::iterator	currentChannelIt;
 
 	while (*cArgs.sstream >> word)
 	{
@@ -36,22 +44,25 @@ void	Server::mode(t_commandArgs & cArgs)
 				throw std::invalid_argument("ERR_CHANOPRIVSNEEDED (482)");
 			for (size_t i = 0; i < word.size(); i++)
 			{
-				//std::cout << "word[i] :" << word[i] << std::endl;
-				if (word[i] == '+' && i != word.size() - 1)
+				if (word[i] == '+')
 				{
+					if (i == word.size() - 1)
+					{
+						sscount++;
+						break;
+					}
 					hasSign = true;
-					if (i == 0 || (i > 0 && word[i - 1] != '+' && word[i - 1] != '-'))
-						activate = true;
-					else
-						throw std::invalid_argument("Error: double +.");
+					activate = true;
 				}
-				else if (word[i] == '-' && i != word.size() - 1)
+				else if (word[i] == '-')
 				{
+					if (i == word.size() - 1)
+					{
+						sscount++;
+						break;
+					}
 					hasSign = true;
-					if (i == 0 || (i > 0 && word[i - 1] != '+' && word[i - 1] != '-'))
-						activate = false;
-					else
-						throw std::invalid_argument("Error: double -.");
+					activate = false;
 				}
 				else if (word[i] == 'i')
 				{
@@ -76,7 +87,7 @@ void	Server::mode(t_commandArgs & cArgs)
 					else
 					{
 						currentChannelIt->second.setTopicForAll(false);
-						changes["+t"] = "";
+						changes["-t"] = "";
 					}
 				}
 				else if (word[i] == 'k')
@@ -85,7 +96,7 @@ void	Server::mode(t_commandArgs & cArgs)
 					{
 						if (*cArgs.sstream >> args)
 						{
-							//*cArgs._channels.addOperator(args);
+							currentChannelIt->second.setPassword(args);
 							changes["+k"] = args;
 						}
 						else
@@ -95,8 +106,8 @@ void	Server::mode(t_commandArgs & cArgs)
 					}
 					else
 					{
-						//*cArgs._channels.removeOperator(*cArgs.client);
-							changes["-k"] = "";
+						currentChannelIt->second.setPassword("");
+						changes["-k"] = "";
 					}
 				}
 				else if (word[i] == 'o')
@@ -133,10 +144,18 @@ void	Server::mode(t_commandArgs & cArgs)
 				{
 					if (activate)
 					{
-						if (*cArgs.sstream >> args && isInt(args))
+						if (*cArgs.sstream >> args)
 						{
-							//*cArgs._channels.addOperator(args);
-							changes["+l"] = args;
+							int limit;
+							errno = 0;
+							char *end = NULL;
+
+							limit = std::strtol(args.c_str(), &end, 10);
+							if (*end == '\0' || errno == ERANGE || limit > MAX_CLIENT)
+							{
+								currentChannelIt->second.setUserLimit(limit);
+								changes["+l"] = args;
+							}
 						}
 						else
 						{
@@ -145,18 +164,21 @@ void	Server::mode(t_commandArgs & cArgs)
 					}
 					else
 					{
-						//*cArgs._channels.removeOperator(*cArgs.client);
-							changes["-l"] = "";
+						currentChannelIt->second.setUserLimit(-1);
+						changes["-l"] = "";
 					}
 				}
 				else
-					throw std::invalid_argument(" ERR_UMODEUNKNOWNFLAG (501)");
+					std::cout << "ERR_UNKNOWNMODE (472)" << std::endl;
 			}
 		}
 		sscount++;
 	}
 	if (sscount == 1)
+	{
+		//!donner les infos au client
 		throw std::invalid_argument("RPL_CHANNELMODEIS (324) & RPL_CREATIONTIME (329)");
+	}
 
 	//DEBUG
 	std::cout << "MODE " << currentChannelIt->first << " ";
@@ -169,9 +191,7 @@ void	Server::mode(t_commandArgs & cArgs)
 		std::cout << " ";
 		std::cout << it->second;
 	}
+	std::cout << std::endl;
 	//
 
-	(void)cArgs.prefix;//supress
-	(void)cArgs.hasPrefix;//supress
-	return ;
 }

@@ -18,7 +18,7 @@ class Channel
 		//? attention, le client qui construit la class Channel doit etre operateur
 		Channel(Client & client, std::string name, std::string pass);
 
-		bool		checkPassword(std::string pass);
+		bool		checkPassword(std::string const & pass);
 
 		bool		isInInviteMode(void);
 		void		setInviteMode(bool const & im);
@@ -38,10 +38,6 @@ class Channel
 		int			getUserLimit(void) const;
 		void		setUserLimit(int const & ul);
 
-		bool		isOperator(Client & client);
-		bool		isFull(void) const;
-		bool		isInvited(Client & client) const;
-
 		std::map<std::string, Client>	&getConnectedClients();
 		//? j'ai besoin pour join, d'un addclient pour chacune des maps string/Client
 		void		addClient(Client & client); //! attention: verifier si invité.
@@ -56,14 +52,15 @@ class Channel
 		bool		isFull(void) const;
 		bool		isOperator(Client & client) const;
 
+
 	private:
 
-		std::string						_name;
-		std::string						_topic;
-		bool							_inviteMode;
-		bool							_topicForAll;
-		std::string						_password;
-		int								_userLimit;
+		std::string	_name;
+		std::string	_topic;
+		bool		_inviteMode;
+		bool		_topicForAll;
+		std::string	_password;
+		int			_userLimit;
 
 		//? liste des clients connectés
 		std::map<std::string, Client>	_connectedClients;

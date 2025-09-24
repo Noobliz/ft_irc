@@ -4,7 +4,7 @@ Channel::Channel() :
 	_name(),
 	_inviteMode(false),
 	_password(),
-	_userLimit(0)
+	_userLimit(-1)
 {}
 
 Channel::Channel(Channel const & copy) { *this = copy; }
@@ -35,13 +35,15 @@ Channel::Channel(Client & client, std::string name, std::string pass) :
 	_name(name),
 	_inviteMode(false),
 	_password(pass),
-	_userLimit(0)
+	_userLimit(-1)
 {
 	addOperator(client);
 }
 
-bool		Channel::checkPassword(std::string pass)
+bool		Channel::checkPassword(std::string const & pass)
 {
+	if (_password.empty())
+		return true;
 	if (_password == pass)
 		return true;
 	return false;
@@ -105,34 +107,6 @@ void		Channel::setUserLimit(int const & ul)
 	_userLimit = ul;
 }
 
-bool		Channel::isOperator(Client & client)
-{
-	for (std::map<std::string, Client>::iterator it = _chanOperators.begin(); it != _chanOperators.end(); ++it)
-	{
-		if (it->first == client.getNickname())
-			return true;
-	}
-	return false;
-}
-
-bool        Channel::isFull(void) const
-{
-    if (_userLimit >= static_cast<int>(_connectedClients.size()))
-        return true;
-    return false;
-}
-
-bool        Channel::isInvited(Client & client) const
-{
-    std::map<std::string, Client>::const_iterator    inviteIter = _invitedClients.find(client.getNickname());
-
-    if (inviteIter != _invitedClients.end())
-    {
-        return true;
-    }
-    return false;
-}
-
 void		Channel::addClient(Client & client)
 {
 	std::map<std::string, Client>::const_iterator	channelIter = _connectedClients.find(client.getNickname());
@@ -180,7 +154,9 @@ std::map<std::string, Client>	&Channel::getConnectedClients()
 
 bool		Channel::isFull(void) const
 {
-	if (_userLimit >= static_cast<int>(_connectedClients.size()))
+	if (_userLimit == -1)
+		return false;
+	if (_userLimit <= static_cast<int>(_connectedClients.size()))
 		return true;
 	return false;
 }

@@ -17,11 +17,9 @@
 
 #include <cerrno>
 #include <cstdlib>
-#include <climits>
 
 #include <Client.hpp>
 #include <Channel.hpp>
-#include <msgMacros.hpp>
 #include <protocolMsg.hpp>
 
 # define MAX_CLIENT 1024
