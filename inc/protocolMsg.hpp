@@ -7,13 +7,13 @@
 //:server <code numérique> <nick> <cible> :<explication>
 
 #define PRIVMSG(nick, user, target, msg) \
-(UINFO(nick, user) + " PRIVMSG " + target + " " + msg + END)
+(":" + UINFO(nick, user) + " PRIVMSG " + target + " " + msg + END)
 
 #define INVITE(nick, user, target, chan) \
-(UINFO(nick, user) + " INVITE " + target + " " + chan + END)
+(":" + UINFO(nick, user) + " INVITE " + target + " " + chan + END)
 
 #define SERV() std::string \
-(":Lisautim.serv.42network")
+(":Lisautim")
 
 #define ERR_NOSUCHNICK(nick, target) \
 (SERV() + " 401 " + nick + " " + target + " :No such nick/channel" + END)
@@ -37,4 +37,3 @@
 
 #define ERR_USERONCHANNEL(nick, target, channel) \
 (SERV() + " 443 " + nick + " " + target + " " + channel + " :is already on channel" + END)
-

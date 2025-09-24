@@ -58,6 +58,7 @@ void	Server::nick(t_commandArgs & cArgs)
 	}
 	else
 	{
+		//! en fait ca notifie tous les clients avec qui il partage un channel
 		feedback = NICK(cArgs.client->getNickname(), nick);
 		if (send(cArgs.client->getFD(), feedback.c_str(), feedback.length(), 0) == -1)
 			throw std::runtime_error("send() failed");

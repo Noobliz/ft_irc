@@ -41,12 +41,12 @@ class Channel
 		std::map<std::string, Client>	&getConnectedClients();
 		//? j'ai besoin pour join, d'un addclient pour chacune des maps string/Client
 		void		addClient(Client & client); //! attention: verifier si invité.
-
 		void		addOperator(Client & client);
-		std::map<std::string, Client>	getOpperators()const;
-
 		void		inviteClient(Client & client);
+
+		std::map<std::string, Client>	getOpperators()const;
 		std::map<std::string, Client>	getInvitedClient()const;
+
 		bool		isInvited(Client & client) const;
 		bool		isFull(void) const;
 		bool		isOperator(Client & client) const;

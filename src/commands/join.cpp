@@ -39,35 +39,31 @@ void	Server::doJoin(std::map<std::string, std::string> chanPwPair, bool resetUse
 					feedbackToAll = JOIN(cArgs.client->getNickname(), cArgs.client->getUserinfo().username, (*it).first);
 					if (send((*clientit).second.getFD(), feedbackToAll.c_str(), feedbackToAll.length(), 0) == -1)
 						throw std::runtime_error("send() failed");
-					feedbackToAll = "";
 					feedbackNameList += UINFO((*clientit).second.getNickname(), (*clientit).second.getUserinfo().username) + " ";
 				}
 				feedback = RPL_NAMREPLY(cArgs.client->getNickname(), (*it).first);
 				feedback += feedbackNameList + END;
 				feedback += RPL_ENDOFNAMES(cArgs.client->getNickname(), (*it).first);
-				feedback += RPL_NOTOPIC(cArgs.client->getNickname(), (*it).first);
+				if (_channels[(*it).first].getTopic() == "")
+					feedback += RPL_NOTOPIC(cArgs.client->getNickname(), (*it).first);
+				else
+					feedback += RPL_TOPIC(cArgs.client->getNickname(), (*it).first, _channels[(*it).first].getTopic());
 				if (send(cArgs.client->getFD(), feedback.c_str(), feedback.length(), 0) == -1)
 					throw std::runtime_error("send() failed");
 			}
-			feedback = "";
-			feedbackNameList = "";
 		}
 		else
 		{
 			Channel newChan(*cArgs.client, (*it).first, (*it).second);
 			_channels[(*it).first] = newChan;
 			_channels[(*it).first].addClient(*cArgs.client);
-			_channels[(*it).first].addOperator(*cArgs.client);
 			cArgs.client->addChan((*it).first, _channels[(*it).first]);
 			feedback = JOIN(cArgs.client->getNickname(), cArgs.client->getUserinfo().username, (*it).first);
 			feedback += RPL_NAMREPLY(cArgs.client->getNickname(), (*it).first) + UINFO(cArgs.client->getNickname(), cArgs.client->getUserinfo().username) + END;
 			feedback += RPL_ENDOFNAMES(cArgs.client->getNickname(), (*it).first);
-			if (_channels[(*it).first].getTopic() == "")
-				feedback += RPL_NOTOPIC(cArgs.client->getNickname(), (*it).first);
-			else
-				feedback += RPL_TOPIC(cArgs.client->getNickname(), (*it).first, _channels[(*it).first].getTopic());
-			send(cArgs.client->getFD(), feedback.c_str(), feedback.length(), 0);
-			feedback = "";
+			feedback += RPL_NOTOPIC(cArgs.client->getNickname(), (*it).first);
+			if (send(cArgs.client->getFD(), feedback.c_str(), feedback.length(), 0) == -1)
+				throw std::runtime_error("send() failed");
 		}
 	}
 }
@@ -145,8 +141,14 @@ void	Server::join(t_commandArgs & cArgs)
 	if (sscount < 1)
 	{
 		err_feedback = ERR_NEEDMOREPARAMS(cArgs.client->getNickname(), "JOIN");
-		send(cArgs.client->getFD(), err_feedback.c_str(), err_feedback.length(), 0);
+		if (send(cArgs.client->getFD(), err_feedback.c_str(), err_feedback.length(), 0) == -1)
+			throw std::runtime_error("send() failed");
 		throw std::invalid_argument("Error: not enough arguments.");
 	}
-	doJoin(channelPw, resetUserChans, cArgs);
+	if (cArgs.client->isAuth())
+		doJoin(channelPw, resetUserChans, cArgs);
+	else
+	{
+		//!
+	}
 }

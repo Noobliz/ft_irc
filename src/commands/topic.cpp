@@ -2,6 +2,8 @@
 
 void	Server::doTopic(t_commandArgs & cArgs, std::string & channelname, std::string & topic)
 {
+	(void)cArgs;
+	(void)channelname;
 	//? cArgs.client->isInChan(channelname)
 	//!si le client n'est pas dans le channel > 442
 	//!si tu trouves pas le channel > 403

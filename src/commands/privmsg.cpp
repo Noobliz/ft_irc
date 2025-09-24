@@ -5,6 +5,7 @@ void	Server::privmsg(t_commandArgs & cArgs)
 	std::vector<std::string> msgTarget;
 	std::string msg;
 	std::string words;
+	std::string	err_feedback;
 	int sscount = 0;
 	std::streampos ssPos;
 
@@ -39,7 +40,12 @@ void	Server::privmsg(t_commandArgs & cArgs)
 		sscount++;
 	}
 	if (sscount != 2)
+	{
+		err_feedback = ERR_NEEDMOREPARAMS(cArgs.client->getNickname(), "PRIVMSG");
+		if (send(cArgs.client->getFD(), err_feedback.c_str(), err_feedback.length(), 0) == -1)
+			throw std::runtime_error("send() failed");
 		throw std::invalid_argument("Error: not enough arguments.");
+	}
 	// std::cout << "Debug infos:" << std::endl;
 	// std::cout << "vector:" << std::endl;
 	// for (std::vector<std::string>::iterator it = msgTarget.begin(); it != msgTarget.end(); ++it)
@@ -98,8 +104,8 @@ void	Server::doPrivateMsg(Client & client, std::vector<std::string> nick, std::s
 			std::cout << "J'ESSAIE D'ENVOYER UN MESSAGE DANS UN CHANNEL" << std::endl;
 
 			std::string index = (*ite2).first;
-            std::map<std::string, Client> tmp;
-            tmp = _channels[index].getConnectedClients();
+			std::map<std::string, Client> tmp;
+			tmp = _channels[index].getConnectedClients();
 			if (client.isInChan(nick[i]))
 			{
 				std::cout << "JE SUIS BIEN DANS LE CHANNEL DONC JE PEUX" << std::endl;
@@ -126,7 +132,6 @@ void	Server::doPrivateMsg(Client & client, std::vector<std::string> nick, std::s
 		}
 		else
 		{
-
 			feedback = ERR_NOSUCHNICK(client.getNickname(), nick[i]);
 			if (send(client.getFD(), feedback.c_str(), feedback.length(), 0) == -1)
 				throw std::runtime_error("send() failed");

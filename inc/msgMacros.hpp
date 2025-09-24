@@ -29,7 +29,6 @@
 # define ERR_TOOMANYCHANNELS(nick, channel) (":Lisautim 405 " + nick + " " + channel + " :You have joined too many channels" + END)
 
 //? Utile pour mode / privmsg ?
-# define ERR_NOSUCHCHANNEL(nick, channel) (":Lisautim 403 " + nick + " " + channel + " :No such channel" + END)
 # define ERR_BADCHANMASK(nick, channel) (":Lisautim 476 " + nick + " " + channel + " :Bad Channel Mask" + END)
 
 //? Erreur de parsing

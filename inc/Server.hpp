@@ -50,7 +50,7 @@ class Server
 		void	doPrivateMsg(Client & client, std::vector<std::string> nick, std::string msg);
 		void	doJoin(std::map<std::string, std::string> chanPwPair, bool resetUserChans, t_commandArgs cArgs);
 		void	doTopic(t_commandArgs & cArgs, std::string & channelname, std::string & topic);
-		void	doInvite(Client client, std::string const & target, std::string const &channel);
+		void	doInvite(Client & client, std::string const & target, std::string const &channel);
 
 	private :
 

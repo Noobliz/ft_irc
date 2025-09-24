@@ -32,8 +32,8 @@ void	Server::pass(t_commandArgs & cArgs)
 		else
 		{
 			err_feedback = ERR_ALREADYREGISTERED;
-		if (send(cArgs.client->getFD(), err_feedback.c_str(), err_feedback.length(), 0) == -1)
-			throw std::runtime_error("send() failed");
+			if (send(cArgs.client->getFD(), err_feedback.c_str(), err_feedback.length(), 0) == -1)
+				throw std::runtime_error("send() failed");
 		}
 	}
 	else
