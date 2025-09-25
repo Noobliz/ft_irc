@@ -185,15 +185,15 @@ bool		Channel::isOperator(Client & client) const
 	return false;
 }
 
-std::map<std::string, Client>	Channel::getOpperators()const
+std::map<std::string, Client> &	Channel::getOpperators()
 {
 	return _chanOperators;
 }
 
-std::map<std::string, Client>	Channel::getInvitedClient()const
-{
-	return _invitedClients;
-}
+// std::map<std::string, Client>	Channel::getInvitedClient()const
+// {
+// 	return _invitedClients;
+// }
 
 void		Channel::removeInvited(Client & client)
 {
