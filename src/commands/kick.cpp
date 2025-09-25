@@ -131,14 +131,13 @@ void	Server::doKick(Client & client, std::vector<std::string> const &target, std
 		
 		feedback = KICK(client.getNickname(), client.getUserinfo().username, chan, target[i], msg);
 		
-		//rm user from chan and chan from users
-		_clients[clientfd].removeChan(chan);
-		iteChan->second.removeClient(target[i]);
 		for (; ite2 != connectedClients.end(); ++ite2)
 		{
 			if (send(ite2->second.getFD(), feedback.c_str(), feedback.length(), 0) == -1)
-				throw std::runtime_error("send() failed");
+			throw std::runtime_error("send() failed");
 		}
-		send(_clients[clientfd].getFD(), feedback.c_str(), feedback.length(), 0);
+		//rm user from chan and chan from users
+		_clients[clientfd].removeChan(chan);
+		iteChan->second.removeClient(target[i]);
 	}
 }
