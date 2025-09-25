@@ -193,5 +193,5 @@ void	Server::mode(t_commandArgs & cArgs)
 	}
 	std::cout << std::endl;
 	//
-
+	(void)hasSign;
 }
