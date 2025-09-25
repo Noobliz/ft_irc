@@ -9,38 +9,36 @@ void	Server::doJoin(std::map<std::string, std::string> chanPwPair, bool resetUse
 
 	for (std::map<std::string, std::string>::iterator it = chanPwPair.begin(); it != chanPwPair.end(); ++it)
 	{
-		std::map<std::string, Channel>::iterator cit = _channels.find((*it).first);
+		std::map<std::string, Channel>::iterator cit = _channels.find(it->first);
 		if (cit != _channels.end())
 		{
-			if (_channels[(*it).first].checkPassword((*it).second) == false)
+			if (_channels[it->first].checkPassword(it->second) == false)
 			{
-				feedback = ERR_BADCHANNELKEY(cArgs.client->getNickname(), _channels[(*it).first].getName());
+				feedback = ERR_BADCHANNELKEY(cArgs.client->getNickname(), _channels[it->first].getName());
 				if (send(cArgs.client->getFD(), feedback.c_str(), feedback.length(), 0) == -1)
 					throw std::runtime_error("send() failed");
 			}
-			else if (_channels[(*it).first].isFull())
+			else if (_channels[it->first].isFull())
 			{
-				feedback = ERR_CHANNELISFULL(cArgs.client->getNickname(), _channels[(*it).first].getName());
+				feedback = ERR_CHANNELISFULL(cArgs.client->getNickname(), _channels[it->first].getName());
 				if (send(cArgs.client->getFD(), feedback.c_str(), feedback.length(), 0) == -1)
 					throw std::runtime_error("send() failed");
 			}
-			else if (_channels[(*it).first].isInInviteMode() && !_channels[(*it).first].isInvited(*cArgs.client))
+			else if (_channels[it->first].isInInviteMode() && !_channels[it->first].isInvited(*cArgs.client))
 			{
-				feedback = ERR_INVITEONLYCHAN(cArgs.client->getNickname(), _channels[(*it).first].getName());
+				feedback = ERR_INVITEONLYCHAN(cArgs.client->getNickname(), _channels[it->first].getName());
 				if (send(cArgs.client->getFD(), feedback.c_str(), feedback.length(), 0) == -1)
 					throw std::runtime_error("send() failed");
 			}
 			else
 			{
-				_channels[(*it).first].addClient(*cArgs.client);
-				if (_channels[(*it).first].isInvited(*cArgs.client))
+				_channels[it->first].addClient(*cArgs.client);
+				_channels[it->first].removeInvited(*cArgs.client);
+				_channels[it->first].removeOperator(*cArgs.client);
+				cArgs.client->addChan(it->first, _channels[it->first]);
+				for (std::map<std::string, Client>::iterator clientit = _channels[it->first].getConnectedClients().begin(); clientit != _channels[it->first].getConnectedClients().end(); ++clientit)
 				{
-					_channels[it->first].removeInvited(*cArgs.client);
-				}
-				cArgs.client->addChan((*it).first, _channels[(*it).first]);
-				for (std::map<std::string, Client>::iterator clientit = _channels[(*it).first].getConnectedClients().begin(); clientit != _channels[(*it).first].getConnectedClients().end(); ++clientit)
-				{
-					feedbackToAll = JOIN(cArgs.client->getNickname(), cArgs.client->getUserinfo().username, (*it).first);
+					feedbackToAll = JOIN(cArgs.client->getNickname(), cArgs.client->getUserinfo().username, it->first);
 					if (send((*clientit).second.getFD(), feedbackToAll.c_str(), feedbackToAll.length(), 0) == -1)
 						throw std::runtime_error("send() failed");
 					if (_channels[it->first].isOperator(clientit->second))
@@ -52,27 +50,27 @@ void	Server::doJoin(std::map<std::string, std::string> chanPwPair, bool resetUse
 						feedbackNameList += clientit->second.getNickname() + " ";
 					}
 				}
-				feedback = RPL_NAMREPLY(cArgs.client->getNickname(), (*it).first);
+				feedback = RPL_NAMREPLY(cArgs.client->getNickname(), it->first);
 				feedback += feedbackNameList + END;
-				feedback += RPL_ENDOFNAMES(cArgs.client->getNickname(), (*it).first);
-				if (_channels[(*it).first].getTopic() == "")
-					feedback += RPL_NOTOPIC(cArgs.client->getNickname(), (*it).first);
+				feedback += RPL_ENDOFNAMES(cArgs.client->getNickname(), it->first);
+				if (_channels[it->first].getTopic() == "")
+					feedback += RPL_NOTOPIC(cArgs.client->getNickname(), it->first);
 				else
-					feedback += RPL_TOPIC(cArgs.client->getNickname(), (*it).first, _channels[(*it).first].getTopic());
+					feedback += RPL_TOPIC(cArgs.client->getNickname(), it->first, _channels[it->first].getTopic());
 				if (send(cArgs.client->getFD(), feedback.c_str(), feedback.length(), 0) == -1)
 					throw std::runtime_error("send() failed");
 			}
 		}
 		else
 		{
-			Channel newChan(*cArgs.client, (*it).first, (*it).second);
-			_channels[(*it).first] = newChan;
-			_channels[(*it).first].addClient(*cArgs.client);
-			cArgs.client->addChan((*it).first, _channels[(*it).first]);
-			feedback = JOIN(cArgs.client->getNickname(), cArgs.client->getUserinfo().username, (*it).first);
-			feedback += RPL_NAMREPLY(cArgs.client->getNickname(), (*it).first) + UINFO(cArgs.client->getNickname(), cArgs.client->getUserinfo().username) + END;
-			feedback += RPL_ENDOFNAMES(cArgs.client->getNickname(), (*it).first);
-			feedback += RPL_NOTOPIC(cArgs.client->getNickname(), (*it).first);
+			Channel newChan(*cArgs.client, it->first, it->second);
+			_channels[it->first] = newChan;
+			_channels[it->first].addClient(*cArgs.client);
+			cArgs.client->addChan(it->first, _channels[it->first]);
+			feedback = JOIN(cArgs.client->getNickname(), cArgs.client->getUserinfo().username, it->first);
+			feedback += RPL_NAMREPLY(cArgs.client->getNickname(), it->first) + UINFO(cArgs.client->getNickname(), cArgs.client->getUserinfo().username) + END;
+			feedback += RPL_ENDOFNAMES(cArgs.client->getNickname(), it->first);
+			feedback += RPL_NOTOPIC(cArgs.client->getNickname(), it->first);
 			if (send(cArgs.client->getFD(), feedback.c_str(), feedback.length(), 0) == -1)
 				throw std::runtime_error("send() failed");
 		}
