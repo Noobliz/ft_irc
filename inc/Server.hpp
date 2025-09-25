@@ -54,6 +54,7 @@ class Server
 		void	doTopic(t_commandArgs & cArgs, std::string & chan, std::string & topic);
 		void	doInvite(Client & client, std::string const & target, std::string const &channel);
 		void	doWho(std::string & chan, t_commandArgs & cArgs);
+		void	doKick(Client & client, std::vector<std::string> const & target, std::string const &channel, std::string const &msg);
 
 	private :
 

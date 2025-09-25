@@ -156,9 +156,9 @@ std::map<std::string, Client>	&Channel::getConnectedClients()
 
 bool		Channel::isFull(void) const
 {
-	if (_userLimit == -1)
+	if (_userLimit == -1) // ou alors _userLimit < 0 ?
 		return false;
-	if (_userLimit <= static_cast<int>(_connectedClients.size()))
+	if (static_cast<int>(_connectedClients.size()) >= _userLimit)
 		return true;
 	return false;
 }
@@ -203,4 +203,9 @@ void		Channel::removeInvited(Client & client)
 	{
 		_invitedClients.erase(inviteIter);
 	}
+}
+
+void		Channel::removeClient(std::string const & nick)
+{
+	_connectedClients.erase(nick);
 }

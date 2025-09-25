@@ -52,19 +52,6 @@ void	Server::doInvite(Client & client, std::string const & target, std::string c
 	if (send(findClient(target), feedback.c_str(), feedback.length(), 0) == -1)
 		throw std::runtime_error("send() failed");
 
-	//debug
-	// std::map<std::string, Client> invited = (*iteChan).second.getInvitedClient();
-	// if (invited.empty())
-	// {
-	// 	std::cout << "(none)" << std::endl;
-	// 	return;
-	// }
-
-	// std::map<std::string, Client>::const_iterator it = invited.begin();
-	// for (; it != invited.end(); ++it)
-	// {
-	// 	std::cout << "- " << it->second.getNickname() << std::endl;
-	// }
 }
 
 void	Server::invite(t_commandArgs & cArgs)
@@ -83,7 +70,12 @@ void	Server::invite(t_commandArgs & cArgs)
 		else if (sscount == 1)
 		{
 			if (words[0] != '#')
-				throw std::invalid_argument("Error: channel name has to start with #.");
+			{
+				err_feedback = ERR_BADCHANMASK(cArgs.client->getNickname(), words);
+				if (send(cArgs.client->getFD(), err_feedback.c_str(), err_feedback.length(), 0) == -1)
+					throw std::runtime_error("send() failed");
+                throw std::invalid_argument("Error: channel name has to start with #.");
+			}
 			channel = words;
 		}
 		else if (sscount > 1)
@@ -97,6 +89,13 @@ void	Server::invite(t_commandArgs & cArgs)
 			throw std::runtime_error("send() failed");
 		throw std::invalid_argument("Error: not enough arguments.");
 	}
-	doInvite(*cArgs.client, target, channel);
-	return ;
+	if (cArgs.client->isAuth())
+		doInvite(*cArgs.client, target, channel);
+    else
+    {
+        err_feedback = ERR_NOTREGISTERED;
+        if (send(cArgs.client->getFD(), err_feedback.c_str(), err_feedback.length(), 0) == -1)
+            throw std::runtime_error("send() failed");
+        throw std::invalid_argument(err_feedback);
+    }
 }

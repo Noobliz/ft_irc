@@ -54,11 +54,15 @@ void	Server::privmsg(t_commandArgs & cArgs)
 	// }
 	// std::cout << "Msg:" << msg << std::endl;
 	// std::cout << std::endl;
-	if (!cArgs.client->isAuth())
-	{
-		throw std::invalid_argument("Error: client not authentified.");
-	}
-	doPrivateMsg(*cArgs.client, msgTarget, msg);
+    if (cArgs.client->isAuth())
+		doPrivateMsg(*cArgs.client, msgTarget, msg);
+    else
+    {
+        err_feedback = ERR_NOTREGISTERED;
+        if (send(cArgs.client->getFD(), err_feedback.c_str(), err_feedback.length(), 0) == -1)
+            throw std::runtime_error("send() failed");
+        throw std::invalid_argument(err_feedback);
+    }
 }
 
 int	Server::findClient(std::string nickname)
@@ -132,6 +136,7 @@ void	Server::doPrivateMsg(Client & client, std::vector<std::string> nick, std::s
 		}
 		else
 		{
+			//nosuchchan not used in the norm, only nosuchnick for both cases
 			feedback = ERR_NOSUCHNICK(client.getNickname(), nick[i]);
 			if (send(client.getFD(), feedback.c_str(), feedback.length(), 0) == -1)
 				throw std::runtime_error("send() failed");

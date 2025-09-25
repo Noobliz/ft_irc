@@ -58,6 +58,9 @@
 # define INVITE(nick, user, target, chan) \
 (":" + UINFO(nick, user) + " INVITE " + target + " " + chan + END)
 
+# define KICK(nick, user, chan, target, msg) \
+(":" + UINFO(nick, user) + " KICK " + chan + " " + target + " " + msg + END)
+
 # define ERR_NOSUCHNICK(nick, target) \
 (SERV() + " 401 " + nick + " " + target + " :No such nick/channel" + END)
 
@@ -80,3 +83,6 @@
 
 # define ERR_USERONCHANNEL(nick, target, channel) \
 (SERV() + " 443 " + nick + " " + target + " " + channel + " :is already on channel" + END)
+
+# define ERR_USERNOTINCHANNEL(nick, target, channel) \
+(SERV() + " 441 " + nick + " " + target + " " + channel + " :is not on channel" + END)

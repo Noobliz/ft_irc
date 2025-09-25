@@ -130,3 +130,8 @@ void		Client::addChan(std::string const & channelname, Channel & channel)
 	//? channels
 	_channels[channelname] = channel;
 }
+
+void		Client::removeChan(std::string const & chan)
+{
+	_channels.erase(chan);
+}

@@ -52,6 +52,7 @@ class Channel
 		bool		isFull(void) const;
 		bool		isOperator(Client & client) const;
 		void		removeInvited(Client & client);
+		void		removeClient(std::string const & nick);
 
 	private:
 
