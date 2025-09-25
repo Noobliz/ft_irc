@@ -58,10 +58,27 @@ void	Server::nick(t_commandArgs & cArgs)
 	}
 	else
 	{
-		//! en fait ca notifie tous les clients avec qui il partage un channel
-		feedback = NICK(cArgs.client->getNickname(), nick);
-		if (send(cArgs.client->getFD(), feedback.c_str(), feedback.length(), 0) == -1)
-			throw std::runtime_error("send() failed");
+		for (std::map<std::string, Channel>::iterator it = _channels.begin(); it != _channels.end(); ++it)
+		{
+			std::map<std::string, Client>::iterator findClient = it->second.getConnectedClients().find(cArgs.client->getNickname());
+			if (findClient != it->second.getConnectedClients().end())
+			{
+				findClient = it->second.getConnectedClients().begin();
+				for (; findClient != it->second.getConnectedClients().end(); ++findClient)
+				{
+					if (findClient->first == cArgs.client->getNickname())
+					{
+						feedback = NICK(cArgs.client->getNickname(), nick);
+					}
+					else
+					{
+						feedback = NICK(UINFO(cArgs.client->getNickname(), cArgs.client->getUserinfo().username), nick);
+					}
+					if (send(findClient->second.getFD(), feedback.c_str(), feedback.length(), 0) == -1)
+						throw std::runtime_error("send() failed");
+				}
+			}
+		}
 		cArgs.client->setNickname(nick);
 	}
 }
