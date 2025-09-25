@@ -34,6 +34,7 @@ Channel::~Channel()
 Channel::Channel(Client & client, std::string name, std::string pass) :
 	_name(name),
 	_inviteMode(false),
+	_topicForAll(false),
 	_password(pass),
 	_userLimit(-1)
 {
@@ -183,7 +184,7 @@ bool		Channel::isOperator(Client & client) const
 	return false;
 }
 
-std::map<std::string, Client>	Channel::getOpperators()const
+std::map<std::string, Client> &	Channel::getOpperators()
 {
 	return _chanOperators;
 }

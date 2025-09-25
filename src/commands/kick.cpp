@@ -2,7 +2,7 @@
 
 void	Server::kick(t_commandArgs & cArgs)
 {
-	std::string target;
+	std::vector<std::string> targets;
 	std::string channel;
 	std::string msg = "";
 	std::string words;
@@ -20,14 +20,16 @@ void	Server::kick(t_commandArgs & cArgs)
 		}
 		else if (sscount == 1)
 		{
-			target = words;
+			std::stringstream target(words);
+			while (std::getline(target, words, ','))
+				targets.push_back(words);
 			ssPos = cArgs.sstream->tellg();
 		}
 		else if (sscount == 2)
 		{
 			if (words[0] == ':')
 			{
-				msg = (cArgs.sstream->str()).substr(ssPos);//sstream ou *sstream ? :(
+				msg = (cArgs.sstream->str()).substr(ssPos);
 				std::stringstream msgSStream(msg);
 				std::getline(msgSStream, msg, ':');
 				std::getline(msgSStream, msg);
@@ -46,12 +48,15 @@ void	Server::kick(t_commandArgs & cArgs)
 		throw std::invalid_argument("Error: not enough arguments.");
 	std::cout << "Debug infos:" << std::endl;
 	std::cout << "Channel:" << channel << std::endl;
-	std::cout << "Target:" << target << std::endl;
+	for (std::vector<std::string>::iterator it = targets.begin(); it != targets.end(); ++it)
+	{
+		std::cout << "Target:" << *it << std::endl;
+	}
 	std::cout << "Msg:" << msg << std::endl;
 	std::cout << std::endl;
 	(void)cArgs.prefix;//supress
 	(void)cArgs.hasPrefix;//supress
-	//doKick(channel, target, msg, hasPrefix, prefix);
+	//doKick(channel, targets, msg, hasPrefix, prefix);
 	return ;
 }
 

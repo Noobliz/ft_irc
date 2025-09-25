@@ -45,7 +45,7 @@ class Channel
 		void		removeOperator(Client & client);
 		void		inviteClient(Client & client);
 
-		std::map<std::string, Client>	getOpperators()const;
+		std::map<std::string, Client> &	getOpperators();
 		std::map<std::string, Client>	getInvitedClient()const;
 
 		bool		isInvited(Client & client) const;

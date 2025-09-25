@@ -13,12 +13,13 @@
 //? Feedback d'auth
 # define ERR_PASSWDMISMATCH					":Lisautim 464 :Password incorrect\r\n"
 # define ERR_ALREADYREGISTERED				":Lisautim 462 :You may not reregister\r\n"
+# define ERR_NOTREGISTERED                  ":Lisautim 451 :You have not registered\r\n"
 
 //? Feedback de Nick
 # define NICK(oldnick, newnick)				(":" + oldnick + " NICK " + newnick + END)
 # define ERR_NONICKNAMEGIVEN				":Lisautim 431 :No nickname given\r\n"
 # define ERR_NICKNAMEINUSE(nick)			(SERV() + " 433 " + nick + " :Nickname is already in use" + END)
-# define ERR_ERRONEUSNICKNAME(nick)			(SERV() + " 433 " + nick + " :Erroneus nickname" + END)
+# define ERR_ERRONEUSNICKNAME(nick)			(SERV() + " 432 " + nick + " :Erroneus nickname" + END)
 
 //? Feedback de Join
 # define JOIN(nick, user, channel)			(":" + UINFO(nick, user) + " JOIN " + channel + END)
@@ -35,7 +36,15 @@
 # define ERR_TOOMANYCHANNELS(nick, channel)	(SERV() + " 405 " + nick + " " + channel + " :You have joined too many channels" + END)
 
 //? Utile pour mode / privmsg ?
+# define RPL_CHANNELMODEIS(nick, channel, modestring, mode_arguments) \
+(SERV() + " 324 " + nick + " " + channel + " " + modestring + " " + mode_arguments + END)
+# define ERR_USERNOTINCHANNEL(nick, target, channel)	(SERV() + " 441 " + nick + " " + target + " " + channel + " :they aren't on that channel" + END)
+# define ERR_UNKNOWNMODE(nick, modechar)	(SERV() + " 472 " + nick + " " + modechar + " :is unknown mode char to me" + END)
 # define ERR_BADCHANMASK(nick, channel)		(SERV() + " 476 " + nick + " " + channel + " :Bad Channel Mask" + END)
+# define RPL_MODECHANGED1(channel, mode)\
+(SERV() + " MODE " + channel + " " + mode + END)
+# define RPL_MODECHANGED2(channel, mode, arg)\
+(SERV() + " MODE " + channel + " " + mode + " " + arg + END)
 
 //? Erreur de parsing
 # define ERR_NEEDMOREPARAMS(nick, command)	(SERV() + " 461 " + nick + " " + command + " :Not enough parameters" + END)
