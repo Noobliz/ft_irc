@@ -18,7 +18,12 @@ void    Server::kick(t_commandArgs & cArgs)
         if (sscount == 0)
         {
             if (words[0] != '#')
+			{
+				err_feedback = ERR_BADCHANMASK(cArgs.client->getNickname(), words);
+				if (send(cArgs.client->getFD(), err_feedback.c_str(), err_feedback.length(), 0) == -1)
+					throw std::runtime_error("send() failed");
                 throw std::invalid_argument("Error: channel name has to start with #.");
+			}
             channel = words;
         }
         else if (sscount == 1)
