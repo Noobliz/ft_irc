@@ -39,7 +39,14 @@ void	Server::doJoin(std::map<std::string, std::string> chanPwPair, bool resetUse
 					feedbackToAll = JOIN(cArgs.client->getNickname(), cArgs.client->getUserinfo().username, (*it).first);
 					if (send((*clientit).second.getFD(), feedbackToAll.c_str(), feedbackToAll.length(), 0) == -1)
 						throw std::runtime_error("send() failed");
-					feedbackNameList += UINFO((*clientit).second.getNickname(), (*clientit).second.getUserinfo().username) + " ";
+					if (_channels[it->first].isOperator(clientit->second))
+					{
+						feedbackNameList += "@" + clientit->second.getNickname() + " ";
+					}
+					else
+					{
+						feedbackNameList += clientit->second.getNickname() + " ";
+					}
 				}
 				feedback = RPL_NAMREPLY(cArgs.client->getNickname(), (*it).first);
 				feedback += feedbackNameList + END;
@@ -149,6 +156,9 @@ void	Server::join(t_commandArgs & cArgs)
 		doJoin(channelPw, resetUserChans, cArgs);
 	else
 	{
-		//!
+		err_feedback = ERR_NOTREGISTERED;
+		if (send(cArgs.client->getFD(), err_feedback.c_str(), err_feedback.length(), 0) == -1)
+			throw std::runtime_error("send() failed");
+		throw std::invalid_argument(err_feedback);
 	}
 }

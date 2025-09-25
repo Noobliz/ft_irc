@@ -11,6 +11,7 @@ Server::Server(uint16_t const & port, std::string & password) : _port(port), _pa
 	_commandMap["INVITE"] = &Server::invite;
 	_commandMap["TOPIC"] = &Server::topic;
 	_commandMap["MODE"] = &Server::mode;
+	_commandMap["WHO"] = &Server::who;
 }
 
 Server::~Server()

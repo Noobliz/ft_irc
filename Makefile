@@ -15,6 +15,7 @@ SRC =	main.cpp					\
 		src/commands/privmsg.cpp	\
 		src/commands/invite.cpp		\
 		src/commands/kick.cpp		\
+		src/commands/who.cpp		\
 		src/commands/mode.cpp		\
 
 OBJDIR = .obj/

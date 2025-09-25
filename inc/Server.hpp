@@ -53,6 +53,7 @@ class Server
 		void	doJoin(std::map<std::string, std::string> chanPwPair, bool resetUserChans, t_commandArgs cArgs);
 		void	doTopic(t_commandArgs & cArgs, std::string & channelname, std::string & topic);
 		void	doInvite(Client & client, std::string const & target, std::string const &channel);
+		void	doWho(std::string & chan, t_commandArgs & cArgs);
 
 	private :
 
@@ -67,6 +68,7 @@ class Server
 		void	join(t_commandArgs & cArgs);
 		void	invite(t_commandArgs & cArgs);
 		void	mode(t_commandArgs & cArgs);
+		void	who(t_commandArgs & cArgs);
 
 		uint16_t			_port;
 		std::string			_password;
