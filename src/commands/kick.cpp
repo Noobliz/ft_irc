@@ -121,19 +121,19 @@ void	Server::doKick(Client & client, std::vector<std::string> const &target, std
 				throw std::runtime_error("send() failed");
 			throw std::invalid_argument("Error: target not in channel");
 		}
-		std::map<std::string, Client> connectedClients = iteChan->second.getConnectedClients();
+		std::map<std::string, Client> &connectedClients = iteChan->second.getConnectedClients();
 		std::map<std::string, Client>::iterator ite2 = connectedClients.begin();
+		
+		feedback = KICK(client.getNickname(), client.getUserinfo().username, chan, target[i], msg);
+		
+		//rm user from chan and chan from users
+		_clients[clientfd].removeChan(chan);
+		iteChan->second.removeClient(target[i]);
 		for (; ite2 != connectedClients.end(); ++ite2)
 		{
-			feedback = KICK(client.getNickname(), client.getUserinfo().username, chan, target[i], msg);
 			if (send(ite2->second.getFD(), feedback.c_str(), feedback.length(), 0) == -1)
 				throw std::runtime_error("send() failed");
 		}
-		//rm user from chan and chan from user
-		_clients[clientfd].removeChan(chan);
-		iteChan->second.removeClient(target[i]);
+		send(_clients[clientfd].getFD(), feedback.c_str(), feedback.length(), 0);
 	}
-
-
-
 }
