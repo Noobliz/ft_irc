@@ -3,6 +3,7 @@
 Channel::Channel() :
 	_name(),
 	_inviteMode(false),
+	_topicForAll(false),
 	_password(),
 	_userLimit(-1)
 {}
@@ -34,6 +35,7 @@ Channel::~Channel()
 Channel::Channel(Client & client, std::string name, std::string pass) :
 	_name(name),
 	_inviteMode(false),
+	_topicForAll(false),
 	_password(pass),
 	_userLimit(-1)
 {
@@ -191,4 +193,14 @@ std::map<std::string, Client>	Channel::getOpperators()const
 std::map<std::string, Client>	Channel::getInvitedClient()const
 {
 	return _invitedClients;
+}
+
+void		Channel::removeInvited(Client & client)
+{
+	std::map<std::string, Client>::iterator	inviteIter = _invitedClients.find(client.getNickname());
+
+	if (inviteIter != _invitedClients.end())
+	{
+		_invitedClients.erase(inviteIter);
+	}
 }

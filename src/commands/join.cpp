@@ -33,6 +33,10 @@ void	Server::doJoin(std::map<std::string, std::string> chanPwPair, bool resetUse
 			else
 			{
 				_channels[(*it).first].addClient(*cArgs.client);
+				if (_channels[(*it).first].isInvited(*cArgs.client))
+				{
+					_channels[it->first].removeInvited(*cArgs.client);
+				}
 				cArgs.client->addChan((*it).first, _channels[(*it).first]);
 				for (std::map<std::string, Client>::iterator clientit = _channels[(*it).first].getConnectedClients().begin(); clientit != _channels[(*it).first].getConnectedClients().end(); ++clientit)
 				{

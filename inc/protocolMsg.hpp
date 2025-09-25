@@ -30,6 +30,9 @@
 # define RPL_WHOREPLY_OPE(nick, user, target, chan)	(SERV() + " 352 " + nick + " " + chan + " ~" + user + " localhost * " + target + " H@" + END)
 # define RPL_ENDOFWHO(nick, chan)			(SERV() + " 315 " + nick + " " + chan + " :End of /WHO list." + END)
 
+//!si tu modifies et que t'es OPE > ">> @time=2025-09-24T07:17:33.070Z :nick1234!~user1234@gaistn2v.20.unyc.it TOPIC #chan2 :super topic"
+
+# define TOPIC(nick, user, channel, msg)	(":" + UINFO(nick, user) + " TOPIC " + channel + " :" + msg + END)
 # define RPL_NOTOPIC(nick, channel)			(SERV() + " 331 " + nick + " " + channel + " :No topic is set" + END)
 # define RPL_TOPIC(nick, channel, topic)	(SERV() + " 332 " + nick + " " + channel + " :" + topic + END)
 
@@ -70,7 +73,7 @@
 (SERV() + " 403 " + nick + " " + channel + " :No such channel" + END)
 
 # define ERR_NOTONCHANNEL(nick, channel) \
-(SERV() + " 442 " + nick + " " + channel + " :You're not on that channel" + END)
+(SERV() + " " + nick + " " + channel + " :You're not on that channel" + END)
 
 # define ERR_CHANOPRIVSNEEDED(nick, channel) \
 (SERV() + " 482 " + nick + " " + channel + " :You're not channel operator" + END)

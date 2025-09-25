@@ -1,32 +1,70 @@
 #include <Server.hpp>
 
-void	Server::doTopic(t_commandArgs & cArgs, std::string & channelname, std::string & topic)
+void	Server::doTopic(t_commandArgs & cArgs, std::string & chan, std::string & msg)
 {
-	(void)cArgs;
-	(void)channelname;
-	//? cArgs.client->isInChan(channelname)
-	//!si le client n'est pas dans le channel > 442
-	//!si tu trouves pas le channel > 403
-	if (topic.empty())
+	std::map<std::string, Channel>::iterator	iteChan;
+	std::string	feedback;
+
+	iteChan = _channels.find(chan);
+	if (iteChan == _channels.end())
 	{
-		//!si tu consultes et que y a pas > 331 RPL_NOTOPIC
-		//!si tu consultes et qui y a > 332 RPL_TOPIC
+		feedback = ERR_NOSUCHCHANNEL(cArgs.client->getNickname(), chan);
+		if (send(cArgs.client->getFD(), feedback.c_str(), feedback.length(), 0) == -1)
+			throw std::runtime_error("send() failed");
+		throw std::invalid_argument(feedback);
+	}
+
+	if (!cArgs.client->isInChan(chan))
+	{
+		feedback = ERR_NOTONCHANNEL(cArgs.client->getNickname(), chan);
+		if (send(cArgs.client->getFD(), feedback.c_str(), feedback.length(), 0) == -1)
+			throw std::runtime_error("send() failed");
+		throw std::invalid_argument(feedback);
+	}
+
+	if (msg.empty())
+	{
+		if (iteChan->second.getTopic().empty())
+		{
+			feedback = RPL_NOTOPIC(cArgs.client->getNickname(), chan);
+		}
+		else
+		{
+			feedback = RPL_TOPIC(cArgs.client->getNickname(), chan, iteChan->second.getTopic());
+		}
 	}
 	else
 	{
-		//? attention verif si c'est en mode freemodif ou pas
-		//!si tu modifies et que t'es OPE > ">> @time=2025-09-24T07:17:33.070Z :nick1234!~user1234@gaistn2v.20.unyc.it TOPIC #chan2 :super topic"
-		//!si tu modifies et que t'es pas OPE > 482
+		if (!iteChan->second.isTopicForAll() && !iteChan->second.isOperator(*cArgs.client))
+		{
+			feedback = ERR_CHANOPRIVSNEEDED(cArgs.client->getNickname(), chan);
+			if (send(cArgs.client->getFD(), feedback.c_str(), feedback.length(), 0) == -1)
+				throw std::runtime_error("send() failed");
+			throw std::invalid_argument(feedback);
+		}
+		else
+		{
+			iteChan->second.setTopic(msg);
+			feedback = TOPIC(cArgs.client->getNickname(), cArgs.client->getUserinfo().username, chan, msg);
+		}
 	}
+	std::map<std::string, Client>::iterator	iteClient = iteChan->second.getConnectedClients().begin();
+	for (; iteClient != iteChan->second.getConnectedClients().end(); ++iteClient)
+	{
+		if (send(iteClient->second.getFD(), feedback.c_str(), feedback.length(), 0) == -1)
+			throw std::runtime_error("send() failed");
+	}
+	std::cout << feedback << std::endl;
 }
 
 void	Server::topic(t_commandArgs & cArgs)
 {
-	std::string channel;
-	std::string msg = "";
-	std::string words;
-	int sscount = 0;
-	std::streampos ssPos;
+	std::string		channel;
+	std::string		msg = "";
+	std::string		words;
+	std::string		err_feedback;
+	int				sscount = 0;
+	std::streampos	ssPos;
 
 	while (*cArgs.sstream >> words)
 	{
@@ -61,7 +99,18 @@ void	Server::topic(t_commandArgs & cArgs)
 	}
 	if (sscount < 1)
 	{
+		err_feedback = ERR_NEEDMOREPARAMS(cArgs.client->getNickname(), "TOPIC");
+		if (send(cArgs.client->getFD(), err_feedback.c_str(), err_feedback.length(), 0) == -1)
+			throw std::runtime_error("send() failed");
 		throw std::invalid_argument("Error: not enough arguments.");
 	}
-	doTopic(cArgs, channel, msg);
+	if (cArgs.client->isAuth())
+		doTopic(cArgs, channel, msg);
+	else
+	{
+		err_feedback = ERR_NOTREGISTERED;
+		if (send(cArgs.client->getFD(), err_feedback.c_str(), err_feedback.length(), 0) == -1)
+			throw std::runtime_error("send() failed");
+		throw std::invalid_argument(err_feedback);
+	}
 }
