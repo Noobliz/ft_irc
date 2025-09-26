@@ -68,7 +68,7 @@ void	Server::doJoin(std::map<std::string, std::string> chanPwPair, bool resetUse
 			_channels[it->first].addClient(*cArgs.client);
 			cArgs.client->addChan(it->first, _channels[it->first]);
 			feedback = JOIN(cArgs.client->getNickname(), cArgs.client->getUserinfo().username, it->first);
-			feedback += RPL_NAMREPLY(cArgs.client->getNickname(), it->first) + UINFO(cArgs.client->getNickname(), cArgs.client->getUserinfo().username) + END;
+			feedback += RPL_NAMREPLY(cArgs.client->getNickname(), it->first) + "@" + cArgs.client->getNickname() + END;
 			feedback += RPL_ENDOFNAMES(cArgs.client->getNickname(), it->first);
 			feedback += RPL_NOTOPIC(cArgs.client->getNickname(), it->first);
 			if (send(cArgs.client->getFD(), feedback.c_str(), feedback.length(), 0) == -1)
