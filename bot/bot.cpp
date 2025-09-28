@@ -26,7 +26,7 @@ void    Bot::connectToServ()
     
     //send les messages d'auth
     sendMsg("NICK " + _nickname);
-    sendMsg("USER " + _nickname + " localhost server : beautyBot");
+    sendMsg("USER " + _nickname + " 0 * :beautyBot");
     sendMsg("PASS " + _password);
 
 
