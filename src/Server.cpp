@@ -139,7 +139,7 @@ void	Server::run(void)
 		throw std::invalid_argument("Error: epoll_ctl fail");
 
 	signal(SIGINT, &sigHandler);
-	//signal(SIGQUIT, &sigHandler);
+	signal(SIGQUIT, &sigHandler);
 	while (1)
 	{
 		int	n = epoll_wait(_epollfd, _events, MAX_EVENTS, -1);
