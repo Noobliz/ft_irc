@@ -59,6 +59,8 @@
 //? Erreur de parsing
 # define ERR_NEEDMOREPARAMS(nick, command)	(SERV() + " 461 " + nick + " " + command + " :Not enough parameters" + END)
 
+# define PART(nick, user, chan, msg)		(":" + UINFO(nick, user) + " PART " + chan + " :" + msg + END)
+# define QUIT(nick, user, msg)				(":" + UINFO(nick, user) + " QUIT :" + msg + END)
 
 //:server <code numérique> <nick> <cible> :<explication>
 

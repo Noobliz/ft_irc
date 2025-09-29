@@ -58,25 +58,24 @@ void	Server::nick(t_commandArgs & cArgs)
 	}
 	else
 	{
-		for (std::map<std::string, Channel>::iterator it = _channels.begin(); it != _channels.end(); ++it)
+		std::map<std::string, Channel>::iterator chanListIter = cArgs.client->getChannels().begin();
+
+		for (; chanListIter != cArgs.client->getChannels().end(); ++chanListIter)
 		{
-			std::map<std::string, Client>::iterator findClient = it->second.getConnectedClients().find(cArgs.client->getNickname());
-			if (findClient != it->second.getConnectedClients().end())
+			std::map<std::string, Client>::iterator clientListIter = chanListIter->second.getConnectedClients().begin();
+
+			for (; clientListIter != chanListIter->second.getConnectedClients().end(); ++clientListIter)
 			{
-				findClient = it->second.getConnectedClients().begin();
-				for (; findClient != it->second.getConnectedClients().end(); ++findClient)
+				if (clientListIter->first == cArgs.client->getNickname())
 				{
-					if (findClient->first == cArgs.client->getNickname())
-					{
-						feedback = NICK(cArgs.client->getNickname(), nick);
-					}
-					else
-					{
-						feedback = NICK(UINFO(cArgs.client->getNickname(), cArgs.client->getUserinfo().username), nick);
-					}
-					if (send(findClient->second.getFD(), feedback.c_str(), feedback.length(), 0) == -1)
-						throw std::runtime_error("send() failed");
+					feedback = NICK(cArgs.client->getNickname(), nick);
 				}
+				else
+				{
+					feedback = NICK(UINFO(cArgs.client->getNickname(), cArgs.client->getUserinfo().username), nick);
+				}
+				if (send(clientListIter->second.getFD(), feedback.c_str(), feedback.length(), 0) == -1)
+					throw std::runtime_error("send() failed");
 			}
 		}
 		cArgs.client->setNickname(nick);

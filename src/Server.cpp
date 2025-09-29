@@ -12,6 +12,8 @@ Server::Server(uint16_t const & port, std::string & password) : _port(port), _pa
 	_commandMap["TOPIC"] = &Server::topic;
 	_commandMap["MODE"] = &Server::mode;
 	_commandMap["WHO"] = &Server::who;
+	_commandMap["PART"] = &Server::part;
+	_commandMap["QUIT"] = &Server::quit;
 }
 
 Server::~Server()

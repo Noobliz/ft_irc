@@ -135,3 +135,8 @@ void		Client::removeChan(std::string const & chan)
 {
 	_channels.erase(chan);
 }
+
+std::map<std::string, Channel>	&Client::getChannels()
+{
+	return _channels;
+}

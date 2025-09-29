@@ -47,6 +47,8 @@ class Client
 		void		addChan(std::string const & channelname, Channel & channel);
 		void		removeChan(std::string const & chan);
 
+		std::map<std::string, Channel>	&getChannels();
+
 	private :
 
 		int			_fd;

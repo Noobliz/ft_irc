@@ -55,6 +55,8 @@ class Server
 		void	doInvite(Client & client, std::string const & target, std::string const &channel);
 		void	doWho(std::string & chan, t_commandArgs & cArgs);
 		void	doKick(Client & client, std::vector<std::string> const & target, std::string const &channel, std::string const &msg);
+		void	doPart(Client & client, std::vector<std::string> chans, std::string msg);
+		void	doQuit(Client & client, std::string msg);
 
 	private :
 
@@ -70,6 +72,8 @@ class Server
 		void	invite(t_commandArgs & cArgs);
 		void	mode(t_commandArgs & cArgs);
 		void	who(t_commandArgs & cArgs);
+		void	part(t_commandArgs & cArgs);
+		void	quit(t_commandArgs & cArgs);
 
 		uint16_t			_port;
 		std::string			_password;
