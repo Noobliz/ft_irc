@@ -11,31 +11,30 @@
 /**/
 
 //? Feedback d'auth
-# define ERR_PASSWDMISMATCH					":Lisautim 464 :Password incorrect\r\n"
-# define ERR_ALREADYREGISTERED				":Lisautim 462 :You may not reregister\r\n"
-# define ERR_NOTREGISTERED					":Lisautim 451 :You have not registered\r\n"
+# define ERR_PASSWDMISMATCH							":Lisautim 464 :Password incorrect\r\n"
+# define ERR_ALREADYREGISTERED						":Lisautim 462 :You may not reregister\r\n"
+# define ERR_NOTREGISTERED							":Lisautim 451 :You have not registered\r\n"
 
 //? Feedback de Nick
-# define NICK(oldnick, newnick)				(":" + oldnick + " NICK " + newnick + END)
-# define ERR_NONICKNAMEGIVEN				":Lisautim 431 :No nickname given\r\n"
-# define ERR_NICKNAMEINUSE(nick)			(SERV() + " 433 " + nick + " :Nickname is already in use" + END)
-# define ERR_ERRONEUSNICKNAME(nick)			(SERV() + " 432 " + nick + " :Erroneus nickname" + END)
-# define ERR_ERRONEUSNICKNAME(nick)			(SERV() + " 432 " + nick + " :Erroneus nickname" + END)
+# define NICK(oldnick, newnick)						(":" + oldnick + " NICK " + newnick + END)
+# define ERR_NONICKNAMEGIVEN						":Lisautim 431 :No nickname given\r\n"
+# define ERR_NICKNAMEINUSE(nick)					(SERV() + " 433 " + nick + " :Nickname is already in use" + END)
+# define ERR_ERRONEUSNICKNAME(nick)					(SERV() + " 432 " + nick + " :Erroneus nickname" + END)
+# define ERR_ERRONEUSNICKNAME(nick)					(SERV() + " 432 " + nick + " :Erroneus nickname" + END)
 
 //? Feedback de Join
-# define JOIN(nick, user, channel)			(":" + UINFO(nick, user) + " JOIN " + channel + END)
-# define RPL_NAMREPLY(nick, channel)		(SERV() + " 353 " + nick + " = " + channel + " :")
-# define RPL_ENDOFNAMES(nick, channel)		(SERV() + " 366 " + nick + " " + channel + " :End of /NAMES list." + END)
+# define JOIN(nick, user, channel)					(":" + UINFO(nick, user) + " JOIN " + channel + END)
+# define RPL_NAMREPLY(nick, channel)				(SERV() + " 353 " + nick + " = " + channel + " :")
+# define RPL_ENDOFNAMES(nick, channel)				(SERV() + " 366 " + nick + " " + channel + " :End of /NAMES list." + END)
 
 # define RPL_WHOREPLY(nick, user, target, chan)		(SERV() + " 352 " + nick + " " + chan + " ~" + user + " localhost * " + target + " H" + END)
 # define RPL_WHOREPLY_OPE(nick, user, target, chan)	(SERV() + " 352 " + nick + " " + chan + " ~" + user + " localhost * " + target + " H@" + END)
-# define RPL_ENDOFWHO(nick, chan)			(SERV() + " 315 " + nick + " " + chan + " :End of /WHO list." + END)
+# define RPL_ENDOFWHO(nick, chan)					(SERV() + " 315 " + nick + " " + chan + " :End of /WHO list." + END)
 
-//!si tu modifies et que t'es OPE > ">> @time=2025-09-24T07:17:33.070Z :nick1234!~user1234@gaistn2v.20.unyc.it TOPIC #chan2 :super topic"
-
-# define TOPIC(nick, user, channel, msg)	(":" + UINFO(nick, user) + " TOPIC " + channel + " :" + msg + END)
-# define RPL_NOTOPIC(nick, channel)			(SERV() + " 331 " + nick + " " + channel + " :No topic is set" + END)
-# define RPL_TOPIC(nick, channel, topic)	(SERV() + " 332 " + nick + " " + channel + " :" + topic + END)
+//? Feedback de Topic
+# define TOPIC(nick, user, channel, msg)			(":" + UINFO(nick, user) + " TOPIC " + channel + " :" + msg + END)
+# define RPL_NOTOPIC(nick, channel)					(SERV() + " 331 " + nick + " " + channel + " :No topic is set" + END)
+# define RPL_TOPIC(nick, channel, topic)			(SERV() + " 332 " + nick + " " + channel + " :" + topic + END)
 
 # define ERR_BADCHANNELKEY(nick, channel)	(SERV() + " 475 " + nick + " " + channel + " :Cannot join channel (+k)" + END)
 # define ERR_CHANNELISFULL(nick, channel)	(SERV() + " 471 " + nick + " " + channel + " :Cannot join channel (+l)" + END)

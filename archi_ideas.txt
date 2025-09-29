@@ -62,26 +62,3 @@ ca c'est que pour le client qui join le chan
 /									 \
 | !!!! faire les messages de welcome |
 \____________________________________/
-
-
-		std::map<std::string, Channel>::iterator chanListIter = cArgs.client->getChannels().begin();
-
-		for (; chanListIter != cArgs.client->getChannels().end(); ++chanListIter)
-		{
-			std::map<std::string, Client>::iterator clientListIter = chanListIter->second.getConnectedClients().begin();
-
-			for (; clientListIter != chanListIter->second.getConnectedClients().end(); ++clientListIter)
-			{
-				if (clientListIter->first == cArgs.client->getNickname())
-				{
-					feedback = NICK(cArgs.client->getNickname(), nick);
-				}
-				else
-				{
-					feedback = NICK(UINFO(cArgs.client->getNickname(), cArgs.client->getUserinfo().username), nick);
-				}
-				if (send(clientListIter->second.getFD(), feedback.c_str(), feedback.length(), 0) == -1)
-					throw std::runtime_error("send() failed");
-			}
-		}
-		cArgs.client->setNickname(nick);
