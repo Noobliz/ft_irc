@@ -6,7 +6,8 @@ Client::Client() :
 	_passValid(false),
 	_userValid(false),
 	_auth(false)
-{}
+{
+}
 Client::Client(Client const & copy) { *this = copy; }
 
 Client	&Client::operator=(Client const & other)
@@ -35,12 +36,11 @@ Client::Client(int fd) :
 	_userValid(false),
 	_auth(false)
 {
-
 }
 
 Client::~Client()
 {
-	//TODO
+	std::cout << "DESTROCTOR CLIENT CALLED ------<<<<<<<" << std::endl;
 }
 
 

@@ -18,6 +18,10 @@ Server::Server(uint16_t const & port, std::string & password) : _port(port), _pa
 
 Server::~Server()
 {
+	for (std::map<int, Client>::iterator it = _clients.begin(); it != _clients.end(); ++it)
+	{
+		close(it->first);
+	}
 	close(_sockfd);
 	close(_epollfd);
 }
@@ -51,33 +55,6 @@ void	Server::chooseCmd(t_commandArgs & cArgs)
 		//! @time=2025-09-24T07:18:11.459Z :coven.IRC4Fun.net 421 rick1234 TOPIVC :Unknown command
 		throw std::invalid_argument("Error: unknown command");
 	}
-
-	// (void)prefix;
-	// if(cmd == "PASS")
-	// {
-	// 	if (hasPrefix)
-	// 		throw std::invalid_argument("Error: PASS cant have a prefix.");
-	// 	pass(sstream);
-	// }
-	// else if(cmd == "NICK")
-	// 	nick(sstream, hasPrefix, prefix);
-	// else if(cmd == "USER")
-	// 	user(sstream, hasPrefix, prefix);
-	// else if(cmd == "JOIN")
-	// 	join(sstream, hasPrefix, prefix);
-	// else if(cmd == "PRIVMSG")
-	// 	privmsg(client, sstream, hasPrefix, prefix);
-	// else if(cmd == "KICK")
-	// 	kick(sstream, hasPrefix, prefix);
-	// else if(cmd == "INVITE")
-	// 	invite(sstream, hasPrefix, prefix);
-	// else if(cmd == "TOPIC")
-	// 	topic(sstream, hasPrefix, prefix);
-	// else if(cmd == "MODE")
-	// 		;//
-	// else
-
-	// return ;
 }
 
 int	Server::repartitor(Client & client, std::string str)
@@ -111,6 +88,14 @@ int	Server::repartitor(Client & client, std::string str)
 		}
 	}
 	return 0;
+}
+
+bool	catchSig = false;
+
+void	sigHandler(int code)
+{
+	(void)code;
+	catchSig = true;
 }
 
 void	Server::init(void)
@@ -153,13 +138,18 @@ void	Server::run(void)
 	if (epoll_ctl(_epollfd, EPOLL_CTL_ADD, _sockfd, &_ev) == -1)
 		throw std::invalid_argument("Error: epoll_ctl fail");
 
-	// signal(SIGINT, &sigHandler);
-	// signal(SIGQUIT, &sigHandler);
+	signal(SIGINT, &sigHandler);
+	//signal(SIGQUIT, &sigHandler);
 	while (1)
 	{
 		int	n = epoll_wait(_epollfd, _events, MAX_EVENTS, -1);
 		if (n == -1)
-			throw std::invalid_argument("Error: epoll_wait fail");
+		{
+			if (errno == EINTR)
+				break;
+			else
+				throw std::invalid_argument("Error: epoll_wait fail");
+		}
 
 		for (int i = 0; i < n; i++)
 		{
@@ -190,78 +180,32 @@ void	Server::run(void)
 			{
 				if (_events[i].events & EPOLLIN)
 				{
-					//?detecter la commande. "JOIN #chan1" "PRIVMSG #chan1 :bonjour a tou.te.s"
-
-					// un buffer pour recevoir des trucs
-					// passer ce qu'on a recu (sans doute faudra t il reconstruire le buffer a la maniere d'un gnl (tkt))
-					// utiliser la fonction timRepartitor() avec le buffer reconstruit
-					// puis dans timRepartitor, mettre nos fonctions a la suite du parsingTim()
-
-
-                    //Ancienne version
-					// char buffer[1024] = "";
-					// size_t r = recv(_events[i].data.fd, buffer, 1024, 0);
-					// if (r == 0)
-					// {
-					// 	std::cout << "client fermax" << std::endl;
-					// 	close(_events[i].data.fd);
-					// }
-					// else if (r > 0)
-					// {
-					// 	std::cout << "je recois un message" << std::endl;
-					// 	if (buffer[0] != 0)
-					// 	{
-					// 		concatstr = buffer;
-					// 		std::cout << concatstr.size() << std::endl;
-					// 		repartitor(_clients[_events[i].data.fd], concatstr);
-					// 		concatstr = "";
-					// 	}
-
-					// }
-					// else
-					// 	throw std::invalid_argument("Error: recv fail");
-
-                    char buffer[2] = "";
+					char buffer[2] = "";
 					size_t r = recv(_events[i].data.fd, buffer, 1, 0);
 					if (r == 0)
 					{
 						std::cout << "client fermax" << std::endl;
-						close(_events[i].data.fd);
+
+						doQuit(_clients[_events[i].data.fd], "Leaving.");
 					}
 					else if (r > 0)
 					{
 						//std::cout << "je recois un message" << std::endl;
 						if (buffer[0] != '\n')
 						{
-                            concatstr += buffer;
-                            //std::cout << concatstr << std::endl;
-                        }
-                        else
-                        {
+							concatstr += buffer;
+							//std::cout << concatstr << std::endl;
+						}
+						else
+						{
 							concatstr += "\n";
-                            repartitor(_clients[_events[i].data.fd], concatstr);
-                            concatstr = "";
-                        }
+							repartitor(_clients[_events[i].data.fd], concatstr);
+							concatstr = "";
+						}
 
 					}
 					else
 						throw std::invalid_argument("Error: recv fail");
-
-					// size_t s = send(_events[i].data.fd, (void *)"j'ai bien recu ton message merci\n\0", 35, 0);
-
-					// if (s == 0)
-					// {
-					// 	std::cout << "propre" << std::endl;
-					// }
-					// else if (s > 0)
-					// {
-					// 	std::cout << "retour ok" << std::endl;
-					// }
-					// else
-					// {
-					// 	//ici on peut modifier les events pour unlock EPOLLOUT et donc attendre que le buffer soit OK apparemment
-					// }
-
 				}
 
 				if (_events[i].events & (EPOLLHUP | EPOLLRDHUP | EPOLLERR))

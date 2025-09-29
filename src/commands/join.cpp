@@ -63,7 +63,7 @@ void	Server::doJoin(std::map<std::string, std::string> chanPwPair, bool resetUse
 		}
 		else
 		{
-			Channel newChan(*cArgs.client, it->first, it->second);
+			Channel	newChan(*cArgs.client, it->first, it->second);
 			_channels[it->first] = newChan;
 			_channels[it->first].addClient(*cArgs.client);
 			cArgs.client->addChan(it->first, _channels[it->first]);

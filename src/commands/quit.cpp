@@ -4,23 +4,39 @@
 void	Server::doQuit(Client & client, std::string msg)
 {
 	std::string	feedback;
-	std::map<std::string, Channel>::iterator chanListIter = client.getChannels().begin();
-
 	feedback = QUIT(client.getNickname(), client.getUserinfo().username, msg);
 
-	for (; chanListIter != client.getChannels().end(); ++chanListIter)
+	for (std::map<std::string, Channel>::iterator it = _channels.begin(); it != _channels.end(); ++it)
 	{
-		std::map<std::string, Client>::iterator clientListIter = chanListIter->second.getConnectedClients().begin();
-
-		for (; clientListIter != chanListIter->second.getConnectedClients().end(); ++clientListIter)
+		std::map<std::string, Client>::iterator findClient = it->second.getConnectedClients().find(client.getNickname());
+		if (findClient != it->second.getConnectedClients().end())
 		{
-			if (clientListIter->first != client.getNickname())
+			findClient = it->second.getConnectedClients().begin();
+			for (; findClient != it->second.getConnectedClients().end(); ++findClient)
 			{
-				if (send(clientListIter->second.getFD(), feedback.c_str(), feedback.length(), 0) == -1)
-					throw std::runtime_error("send() failed");
+				if (findClient->first != client.getNickname())
+				{
+					if (send(findClient->second.getFD(), feedback.c_str(), feedback.length(), 0) == -1)
+						throw std::runtime_error("send() failed");
+				}
+			}
+			it->second.getConnectedClients().erase(client.getNickname());
+			it->second.getInvitedClient().erase(client.getNickname());
+			it->second.getOperators().erase(client.getNickname());
+			if (it->second.getConnectedClients().size() == 0)
+			{
+				_channels.erase(it->first);
+				break;
 			}
 		}
 	}
+
+
+	int	tmpfd = client.getFD();
+	if (epoll_ctl(_epollfd, EPOLL_CTL_DEL, client.getFD(), NULL) == -1)
+		throw std::invalid_argument("Error: epoll_ctl fail");
+	_clients.erase(client.getFD());
+	close(tmpfd);
 	//! quitter proprement le client du server (epoll ctl + close client fd)
 }
 

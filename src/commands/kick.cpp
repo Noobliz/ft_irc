@@ -139,5 +139,7 @@ void	Server::doKick(Client & client, std::vector<std::string> const &target, std
 		//rm user from chan and chan from users
 		_clients[clientfd].removeChan(chan);
 		iteChan->second.removeClient(target[i]);
+		if (iteChan->second.getConnectedClients().size() == 0)
+			_channels.erase(iteChan->first);
 	}
 }

@@ -35,6 +35,8 @@ void	Server::doPart(Client & client, std::vector<std::string> chans, std::string
 		}
 		_clients[client.getFD()].removeChan((*it));
 		iteChan->second.removeClient(client.getNickname());
+		if (iteChan->second.getConnectedClients().size() == 0)
+			_channels.erase(iteChan->first);
 	}
 }
 

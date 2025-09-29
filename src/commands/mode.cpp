@@ -26,11 +26,11 @@ static void	showModes(std::map<std::string, Channel>::iterator & currentChannelI
 		convert << currentChannelIt->second.getUserLimit();
 		mode_arguments += convert.str() + " ";
 	}
-	std::map<std::string, Client>::const_iterator it = currentChannelIt->second.getOpperators().begin();
-	if (it != currentChannelIt->second.getOpperators().end())
+	std::map<std::string, Client>::const_iterator it = currentChannelIt->second.getOperators().begin();
+	if (it != currentChannelIt->second.getOperators().end())
 	{
 		modestring += "o";
-		for (; it != currentChannelIt->second.getOpperators().end(); ++it)
+		for (; it != currentChannelIt->second.getOperators().end(); ++it)
 			mode_arguments += it->second.getNickname() + ",";
 		mode_arguments = mode_arguments.substr(0, mode_arguments.size() - 1);
 	}
@@ -243,6 +243,7 @@ void	Server::mode(t_commandArgs & cArgs)
 	while (*cArgs.sstream >> word)
 	{
 		//? Case MODE #channel (...)
+		//! merci Tim, par contre euh pourquoi il envoie un feedback de con ?
 		if (sscount == 0)
 		{
 			currentChannelIt = _channels.find(word);
@@ -254,6 +255,11 @@ void	Server::mode(t_commandArgs & cArgs)
 					throw std::runtime_error("send() failed");
 				throw std::invalid_argument(feedback);
 			}
+
+		}
+		//? Case MODE #channel <modes>
+		else if (sscount == 1)
+		{
 			//?Check if User is operator
 			if (!currentChannelIt->second.isOperator(*cArgs.client))
 			{
@@ -262,10 +268,6 @@ void	Server::mode(t_commandArgs & cArgs)
 					throw std::runtime_error("send() failed");
 				throw std::invalid_argument(feedback);
 			}
-		}
-		//? Case MODE #channel <modes>
-		else if (sscount == 1)
-		{
 			for (size_t i = 0; i < word.size(); i++)
 			{
 				if (word[i] == '+')

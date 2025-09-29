@@ -22,7 +22,6 @@ void	Server::nick(t_commandArgs & cArgs)
 
 	while (*cArgs.sstream >> words)
 	{
-		std::cout << "words :" << words << std::endl;
 		if (sscount == 0)
 			nick = words;
 		else if (sscount > 0)
@@ -53,31 +52,41 @@ void	Server::nick(t_commandArgs & cArgs)
 	}
 	if (!cArgs.client->isAuth())
 	{
+		std::cout << "je suis pas encore auth donc je nick" << std::endl;
 		cArgs.client->setNickname(nick);
 		cArgs.client->setNickValid(true);
 	}
 	else
 	{
-		std::map<std::string, Channel>::iterator chanListIter = cArgs.client->getChannels().begin();
+		std::string	oldnick = cArgs.client->getNickname();
+		cArgs.client->setNickname(nick);
 
-		for (; chanListIter != cArgs.client->getChannels().end(); ++chanListIter)
+		for (std::map<std::string, Channel>::iterator it = _channels.begin(); it != _channels.end(); ++it)
 		{
-			std::map<std::string, Client>::iterator clientListIter = chanListIter->second.getConnectedClients().begin();
-
-			for (; clientListIter != chanListIter->second.getConnectedClients().end(); ++clientListIter)
+			std::map<std::string, Client>::iterator findClient = it->second.getConnectedClients().find(oldnick);
+			if (findClient != it->second.getConnectedClients().end())
 			{
-				if (clientListIter->first == cArgs.client->getNickname())
+				findClient = it->second.getConnectedClients().begin();
+				for (; findClient != it->second.getConnectedClients().end(); ++findClient)
 				{
-					feedback = NICK(cArgs.client->getNickname(), nick);
+					if (findClient->first == oldnick)
+					{
+						feedback = NICK(oldnick, nick);
+					}
+					else
+					{
+						feedback = NICK(UINFO(oldnick, cArgs.client->getUserinfo().username), nick);
+					}
+					if (send(findClient->second.getFD(), feedback.c_str(), feedback.length(), 0) == -1)
+						throw std::runtime_error("send() failed");
 				}
-				else
-				{
-					feedback = NICK(UINFO(cArgs.client->getNickname(), cArgs.client->getUserinfo().username), nick);
-				}
-				if (send(clientListIter->second.getFD(), feedback.c_str(), feedback.length(), 0) == -1)
-					throw std::runtime_error("send() failed");
+				if (it->second.getConnectedClients().erase(oldnick))
+					it->second.getConnectedClients()[nick] = *cArgs.client;
+				if (it->second.getInvitedClient().erase(oldnick))
+					it->second.getInvitedClient()[nick] = *cArgs.client;
+				if (it->second.getOperators().erase(oldnick))
+					it->second.getOperators()[nick] = *cArgs.client;
 			}
 		}
-		cArgs.client->setNickname(nick);
 	}
 }

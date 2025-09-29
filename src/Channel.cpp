@@ -6,7 +6,9 @@ Channel::Channel() :
 	_topicForAll(false),
 	_password(),
 	_userLimit(-1)
-{}
+{
+	std::cout << "JE SUIS UN CON, STRUCTEUR --- par defaut" << std::endl;
+}
 
 Channel::Channel(Channel const & copy) { *this = copy; }
 
@@ -25,6 +27,7 @@ Channel	&Channel::operator=(Channel const & other)
 		_chanOperators = other._chanOperators;
 	}
 	return *this;
+	std::cout << "JE SUIS UN ATTRIBUTEUR --- par assignement" << std::endl;
 }
 
 Channel::~Channel()
@@ -39,6 +42,7 @@ Channel::Channel(Client & client, std::string name, std::string pass) :
 	_password(pass),
 	_userLimit(-1)
 {
+	std::cout << "JE SUIS UN CON, STRUCTEUR --- par argument" << std::endl;
 	addOperator(client);
 }
 
@@ -185,15 +189,15 @@ bool		Channel::isOperator(Client & client) const
 	return false;
 }
 
-std::map<std::string, Client> &	Channel::getOpperators()
+std::map<std::string, Client> &	Channel::getOperators()
 {
 	return _chanOperators;
 }
 
-// std::map<std::string, Client>	Channel::getInvitedClient()const
-// {
-// 	return _invitedClients;
-// }
+std::map<std::string, Client>	&Channel::getInvitedClient()
+{
+	return _invitedClients;
+}
 
 void		Channel::removeInvited(Client & client)
 {
@@ -208,4 +212,6 @@ void		Channel::removeInvited(Client & client)
 void		Channel::removeClient(std::string const & nick)
 {
 	_connectedClients.erase(nick);
+	_invitedClients.erase(nick);
+	_chanOperators.erase(nick);
 }

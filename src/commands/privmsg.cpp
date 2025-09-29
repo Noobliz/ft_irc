@@ -67,11 +67,10 @@ void	Server::privmsg(t_commandArgs & cArgs)
 
 int	Server::findClient(std::string nickname)
 {
-
-	for (size_t i = 0; i < _clients.size(); i++)
+	for (std::map<int, Client>::iterator it = _clients.begin(); it != _clients.end(); ++it)
 	{
-		if (_clients[i].getNickname() == nickname)
-			return _clients[i].getFD();
+		if (it->second.getNickname() == nickname)
+			return it->second.getFD();
 	}
 	return (-2);
 }
