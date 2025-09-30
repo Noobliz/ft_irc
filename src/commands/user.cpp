@@ -53,6 +53,12 @@ void	Server::user(t_commandArgs & cArgs)
 	{
 		cArgs.client->setUserinfo(userinfos);
 		cArgs.client->setUserValid(true);
+		if (cArgs.client->isAuth())
+		{
+			std::string	welcome = WELCOME(cArgs.client->getNickname());
+			if (send(cArgs.client->getFD(), welcome.c_str(), welcome.length(), 0) == -1)
+				throw std::runtime_error("send() failed");
+		}
 	}
 	else
 	{

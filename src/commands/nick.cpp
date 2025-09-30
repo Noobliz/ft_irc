@@ -55,6 +55,12 @@ void	Server::nick(t_commandArgs & cArgs)
 		std::cout << "je suis pas encore auth donc je nick" << std::endl;
 		cArgs.client->setNickname(nick);
 		cArgs.client->setNickValid(true);
+		if (cArgs.client->isAuth())
+		{
+			std::string	welcome = WELCOME(cArgs.client->getNickname());
+			if (send(cArgs.client->getFD(), welcome.c_str(), welcome.length(), 0) == -1)
+				throw std::runtime_error("send() failed");
+		}
 	}
 	else
 	{

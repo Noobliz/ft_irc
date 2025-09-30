@@ -94,3 +94,12 @@
 
 # define ERR_USERONCHANNEL(nick, target, channel) \
 (SERV() + " 443 " + nick + " " + target + " " + channel + " :is already on channel" + END)
+
+//?Welcome feedback
+
+# define RPL_WELCOME(nick)	("Lisautim :Welcome to the localhost Network, " + nick + END)
+# define RPL_YOURHOST		"Lisautim :Your host is Lisautim, running version 0.000001\r\n"
+# define RPL_CREATED		"Lisautim :This server was created 8 years ago\r\n"
+# define RPL_MYINFO			"Lisautim Lisautim 0.000001 - +kiopl\r\n"
+# define RPL_ISUPPORT		"Lisautim PREFIX=@ CHANTYPES=# NICKLEN=9 :are supported by this server\r\n"
+# define WELCOME(nick)		(RPL_WELCOME(nick) + RPL_YOURHOST + RPL_CREATED + RPL_MYINFO + RPL_ISUPPORT)
