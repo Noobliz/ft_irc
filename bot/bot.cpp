@@ -110,7 +110,8 @@ void    Bot::run()
 {
     std::string	concatstr = "";
     bool    connected = true;
-    fcntl(_sockFd, F_SETFL, O_NONBLOCK);
+	if (fcntl(_sockFd, F_SETFL, O_NONBLOCK) == -1)
+		throw std::invalid_argument("Error: fcntl fail");
 
     signal(SIGINT, &sigHandler);
 	signal(SIGQUIT, &sigHandler);
