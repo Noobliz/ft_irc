@@ -14,8 +14,16 @@ Server::Server(uint16_t const & port, std::string & password) : _port(port), _pa
 	_commandMap["WHO"] = &Server::who;
 	_commandMap["PART"] = &Server::part;
 	_commandMap["QUIT"] = &Server::quit;
+	_commandMap["bot"] = &Server::bot;
 }
 
+
+void Server::sendMsg(const std::string &msg, int fd)const
+{
+    std::string full_msg = msg + "\r\n";
+    if (send(fd, full_msg.c_str(), full_msg.length(), 0) == -1)
+        throw std::invalid_argument("Error: send fail");
+}
 Server::~Server()
 {
 	for (std::map<int, Client>::iterator it = _clients.begin(); it != _clients.end(); ++it)

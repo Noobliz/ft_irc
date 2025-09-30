@@ -5,6 +5,8 @@
 #include <stdexcept>
 #include <cstdlib>
 #include <unistd.h>
+#include <sstream>
+#include <ctime> 
 
 class Bot
 {
@@ -14,6 +16,8 @@ class Bot
 		//void	init(int port, const std::string &nick);
 		void	connectToServ();
 		void	run();
+		std::string 	getRandomMessage() const;
+		void	sendBack(std::string concatstr);
 		Bot(int port, const std::string &pass);
 
 	private:

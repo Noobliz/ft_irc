@@ -19,6 +19,8 @@ SRC =	main.cpp					\
 		src/commands/mode.cpp		\
 		src/commands/part.cpp		\
 		src/commands/quit.cpp		\
+		src/commands/bot.cpp		\
+
 
 OBJDIR = .obj/
 OBJ = $(addprefix $(OBJDIR),$(SRC:.cpp=.o))

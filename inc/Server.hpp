@@ -47,6 +47,7 @@ class Server
 		int		repartitor(Client & client, std::string str);
 		void	chooseCmd(t_commandArgs &cArgs);
 		//Client	findClient(int fd) const;
+		void	sendMsg(const std::string &msg, int fd)const;
 		int		findClient(std::string nickname);
 
 		void	doPrivateMsg(Client & client, std::vector<std::string> nick, std::string msg);
@@ -74,6 +75,7 @@ class Server
 		void	who(t_commandArgs & cArgs);
 		void	part(t_commandArgs & cArgs);
 		void	quit(t_commandArgs & cArgs);
+		void	bot(t_commandArgs & cArgs);
 
 		uint16_t			_port;
 		std::string			_password;
