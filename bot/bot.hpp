@@ -21,10 +21,12 @@ class Bot
 		std::string 	getRandomMessage() const;
 		void	sendBack(std::string concatstr);
 		Bot(int port, const std::string &pass);
+		~Bot();
 
 	private:
 		Bot();
-
+		Bot(Bot const & copy);
+		Bot	&operator=(Bot const & other);
 
 		int						_sockFd;
 		struct sockaddr_in		_servAddr;
