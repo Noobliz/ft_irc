@@ -10,6 +10,13 @@ Bot::Bot(int port, const std::string &pass): _port(port), _password(pass), _nick
 		throw std::invalid_argument("Error: socket fail");
     srand(time(NULL));
 }
+bool	catchSig = false;
+
+void	sigHandler(int code)
+{
+	(void)code;
+	catchSig = true;
+}
 
 void Bot::sendMsg(const std::string &msg)const
 {
@@ -100,14 +107,20 @@ void    Bot::run()
 {
     std::string	concatstr = "";
     bool    connected = true;
-    while (connected)
+    fcntl(_sockFd, F_SETFL, O_NONBLOCK);
+    
+    signal(SIGINT, &sigHandler);
+	signal(SIGQUIT, &sigHandler);
+    while (connected && catchSig == false)
     {
         char buffer[2] = "";
         size_t r = recv(_sockFd, buffer, 1, 0);
+        if (catchSig == true)
+            break;
         if (r == 0)
         {
             std::cout << "server fermax" << std::endl;
-            close(_sockFd);
+            //close(_sockFd);
             connected = false;
         }
         else if (r > 0)
@@ -128,5 +141,8 @@ void    Bot::run()
             throw std::invalid_argument("Error: recv failed");
         }
     }
+    close(_sockFd);
+    _sockFd = -1;
+    std::cout << "Bot stopped." << std::endl;
 
 }

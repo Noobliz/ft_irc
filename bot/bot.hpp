@@ -7,6 +7,8 @@
 #include <unistd.h>
 #include <sstream>
 #include <ctime> 
+#include <csignal> 
+#include <fcntl.h>
 
 class Bot
 {
@@ -21,13 +23,12 @@ class Bot
 		Bot(int port, const std::string &pass);
 
 	private:
+		Bot();
+
+
 		int						_sockFd;
 		struct sockaddr_in		_servAddr;
 		uint16_t				_port;
 		std::string				_password;
 		std::string				_nickname;
-		std::list<std::string>	_oldChans;
-		std::list<std::string>	_newChans;
-
-
 };
