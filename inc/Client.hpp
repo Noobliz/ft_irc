@@ -16,7 +16,6 @@ class Channel;
 
 class Client
 {
-
 	public :
 
 		Client();
@@ -42,7 +41,6 @@ class Client
 		void		setUserValid(bool const uv);
 
 		bool		isInChan(std::string const & channelname) const;
-		//! sert pour savoir si je peux envoyer le message dans le chan, mais aussi pour savoir si je dois effectuer ou non "join"
 
 		void		addChan(std::string const & channelname, Channel & channel);
 		void		removeChan(std::string const & chan);
@@ -52,23 +50,16 @@ class Client
 	private :
 
 		int			_fd;
-
-		//? bool		_connected;
 		bool		_nickValid;
 		bool		_passValid;
 		bool		_userValid;
 		bool		_auth;
 
-		//? c'est ca qui nous garanti que c'est unique.
 		std::string	_nickname;
-
-		//? on ne sait pas exactement a quoi ca sert.
 		std::string	_username;
 		std::string	_hostname;
 		std::string	_servername;
 		std::string	_realname;
 
-		//? la liste des channels ou le client est connecté
 		std::map<std::string, Channel>	_channels;
-
 };

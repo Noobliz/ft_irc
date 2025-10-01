@@ -44,14 +44,13 @@ void	Server::part(t_commandArgs & cArgs)
 {
 	std::vector<std::string>	chans;
 	std::streampos	ssPos;
-	std::string	msg;
-	std::string	words;
-	std::string	err_feedback;
-	int	sscount = 0;
+	std::string		msg;
+	std::string		words;
+	std::string		err_feedback;
+	int				sscount = 0;
 
 	while (*cArgs.sstream >> words)
 	{
-		std::cout << "words :" << words << std::endl;
 		if (sscount == 0)
 		{
 			std::stringstream	targets(words);

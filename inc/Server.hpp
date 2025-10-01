@@ -14,7 +14,6 @@
 #include <stack>
 #include <list>
 #include <signal.h>
-
 #include <cerrno>
 #include <cstdlib>
 
@@ -44,24 +43,16 @@ class Server
 		void	init(void);
 		void	run(void);
 
-		int		repartitor(Client & client, std::string str);
-		void	chooseCmd(t_commandArgs &cArgs);
-		//Client	findClient(int fd) const;
-		void	sendMsg(const std::string &msg, int fd)const;
-		int		findClient(std::string nickname);
-
-		void	doPrivateMsg(Client & client, std::vector<std::string> nick, std::string msg);
-		void	doJoin(std::map<std::string, std::string> chanPwPair, bool resetUserChans, t_commandArgs cArgs);
-		void	doTopic(t_commandArgs & cArgs, std::string & chan, std::string & topic);
-		void	doInvite(Client & client, std::string const & target, std::string const &channel);
-		void	doWho(std::string & chan, t_commandArgs & cArgs);
-		void	doKick(Client & client, std::vector<std::string> const & target, std::string const &channel, std::string const &msg);
-		void	doPart(Client & client, std::vector<std::string> chans, std::string msg);
-		void	doQuit(Client & client, std::string msg);
-
 	private :
 
 		Server();
+		Server(Server const & copy);
+		Server &operator=(Server const & other);
+
+		int		repartitor(Client & client, std::string str);
+		void	chooseCmd(t_commandArgs &cArgs);
+		void	sendMsg(const std::string &msg, int fd)const;
+		int		findClient(std::string nickname);
 
 		void	user(t_commandArgs & cArgs);
 		void	topic(t_commandArgs & cArgs);
@@ -77,6 +68,15 @@ class Server
 		void	quit(t_commandArgs & cArgs);
 		void	bot(t_commandArgs & cArgs);
 
+		void	doPrivateMsg(Client & client, std::vector<std::string> nick, std::string msg);
+		void	doJoin(std::map<std::string, std::string> chanPwPair, t_commandArgs cArgs);
+		void	doTopic(t_commandArgs & cArgs, std::string & chan, std::string & topic);
+		void	doInvite(Client & client, std::string const & target, std::string const &channel);
+		void	doWho(std::string & chan, t_commandArgs & cArgs);
+		void	doKick(Client & client, std::vector<std::string> const & target, std::string const &channel, std::string const &msg);
+		void	doPart(Client & client, std::vector<std::string> chans, std::string msg);
+		void	doQuit(Client & client, std::string msg);
+
 		uint16_t			_port;
 		std::string			_password;
 		int					_sockfd;
@@ -87,6 +87,7 @@ class Server
 
 		std::map<int, Client>			_clients;
 		std::map<std::string, Channel>	_channels;
+
 		std::map<std::string, void (Server::*)(t_commandArgs&)>	_commandMap;
 
 };

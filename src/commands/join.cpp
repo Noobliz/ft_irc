@@ -1,8 +1,7 @@
 #include <Server.hpp>
 
-void	Server::doJoin(std::map<std::string, std::string> chanPwPair, bool resetUserChans, t_commandArgs cArgs)
+void	Server::doJoin(std::map<std::string, std::string> chanPwPair, t_commandArgs cArgs)
 {
-	(void)resetUserChans; //!handle reset user chans ?
 	std::string	feedbackToAll;
 	std::string	feedbackNameList;
 	std::string	feedback;
@@ -83,22 +82,13 @@ void	Server::join(t_commandArgs & cArgs)
 	std::stack<std::string>				passwords;
 	std::string							words;
 	std::string							err_feedback;
-	bool	resetUserChans = false;
 	int		sscount = 0;
 	int		channelCount = 0;
 	int		passwordCount = 0;
 
 	while (*cArgs.sstream >> words)
 	{
-		std::cout << "words :" << words << std::endl;
-		if (words == "0" && sscount != 1)
-			resetUserChans = true;
-		else if (resetUserChans)
-		{
-			throw std::invalid_argument("Error: too many arguments.");
-
-		}
-		else if (sscount == 0)
+		if (sscount == 0)
 		{
 			std::stringstream	channels(words);
 			std::string			channelName;
@@ -113,7 +103,6 @@ void	Server::join(t_commandArgs & cArgs)
 					throw std::invalid_argument("Error: max 200 char for channel name.");
 				}
 				channelCount++;
-				std::cout << "channel" << channelCount << ": " << channelName << std::endl;
 				channelPw[channelName] = "";
 			}
 		}
@@ -124,13 +113,11 @@ void	Server::join(t_commandArgs & cArgs)
 			while (std::getline(pwList, password, ','))
 			{
 				passwordCount++;
-				std::cout << "password" << passwordCount << ": " << password << std::endl;
 				passwords.push(password);
 			}
 			if (passwordCount > channelCount)
 			{
 				throw std::invalid_argument("Error: More passwords than channels.");
-
 			}
 			std::map<std::string, std::string>::reverse_iterator it = channelPw.rbegin();
 			while (channelCount > passwordCount)
@@ -152,10 +139,10 @@ void	Server::join(t_commandArgs & cArgs)
 		err_feedback = ERR_NEEDMOREPARAMS(cArgs.client->getNickname(), "JOIN");
 		if (send(cArgs.client->getFD(), err_feedback.c_str(), err_feedback.length(), 0) == -1)
 			throw std::runtime_error("send() failed");
-		throw std::invalid_argument("Error: not enough arguments.");
+		throw std::invalid_argument(err_feedback);
 	}
 	if (cArgs.client->isAuth())
-		doJoin(channelPw, resetUserChans, cArgs);
+		doJoin(channelPw, cArgs);
 	else
 	{
 		err_feedback = ERR_NOTREGISTERED;

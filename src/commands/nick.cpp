@@ -52,7 +52,6 @@ void	Server::nick(t_commandArgs & cArgs)
 	}
 	if (!cArgs.client->isAuth())
 	{
-		std::cout << "je suis pas encore auth donc je nick" << std::endl;
 		cArgs.client->setNickname(nick);
 		cArgs.client->setNickValid(true);
 		if (cArgs.client->isAuth())

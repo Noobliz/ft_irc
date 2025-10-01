@@ -1,7 +1,7 @@
 CXX = c++
 CXXFLAGS = -Wall -Wextra -Werror -std=c++98 -g
 
-NAME = bot
+NAME = beautyBot
 
 SRC =	main.cpp					\
 		bot.cpp

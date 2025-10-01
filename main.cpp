@@ -4,6 +4,7 @@ int	main(int ac, char **av)
 {
 	long		parsePort;
 	u_int16_t	port;
+	char		*end;
 	std::string	password;
 
 	if (ac != 3)
@@ -12,8 +13,12 @@ int	main(int ac, char **av)
 		return 1;
 	}
 	password = static_cast<std::string>(av[2]);
-	parsePort = std::strtol(av[1], NULL, 10);
-
+	parsePort = std::strtol(av[1], &end, 10);
+	if (*end != '\0')
+	{
+		std::cerr << "Error: port must be an integer" << std::endl;
+		return 1;
+	}
 	if (parsePort < 0 || parsePort > 65536)
 	{
 		std::cerr << "Error: port must be between 0 and 65536." << std::endl << "Hint: use port > 1024 unless you are root." << std::endl;
@@ -32,6 +37,10 @@ int	main(int ac, char **av)
 	{
 		serv.init();
 		serv.run();
+	}
+	catch (std::runtime_error &e)
+	{
+		return 1;
 	}
 	catch (std::exception &e)
 	{

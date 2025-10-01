@@ -9,7 +9,6 @@ void	Server::pass(t_commandArgs & cArgs)
 
 	while (*cArgs.sstream >> words)
 	{
-		std::cout << "words :" << words << std::endl;
 		if (sscount == 0)
 			password = words;
 		else if (sscount > 0)

@@ -2,16 +2,15 @@
 
 void	Server::privmsg(t_commandArgs & cArgs)
 {
-	std::vector<std::string> msgTarget;
-	std::string msg;
-	std::string words;
-	std::string	err_feedback;
-	int sscount = 0;
-	std::streampos ssPos;
+	std::vector<std::string>	msgTarget;
+	std::string		msg;
+	std::string		words;
+	std::string		err_feedback;
+	std::streampos	ssPos;
+	int				sscount = 0;
 
 	while (*cArgs.sstream >> words)
 	{
-		std::cout << "words :" << words << std::endl;
 		if (sscount == 0)
 		{
 			std::stringstream targets(words);
@@ -46,23 +45,15 @@ void	Server::privmsg(t_commandArgs & cArgs)
 			throw std::runtime_error("send() failed");
 		throw std::invalid_argument("Error: not enough arguments.");
 	}
-	// std::cout << "Debug infos:" << std::endl;
-	// std::cout << "vector:" << std::endl;
-	// for (std::vector<std::string>::iterator it = msgTarget.begin(); it != msgTarget.end(); ++it)
-	// {
-	//     std::cout << *it << std::endl;
-	// }
-	// std::cout << "Msg:" << msg << std::endl;
-	// std::cout << std::endl;
-    if (cArgs.client->isAuth())
+	if (cArgs.client->isAuth())
 		doPrivateMsg(*cArgs.client, msgTarget, msg);
-    else
-    {
-        err_feedback = ERR_NOTREGISTERED;
-        if (send(cArgs.client->getFD(), err_feedback.c_str(), err_feedback.length(), 0) == -1)
-            throw std::runtime_error("send() failed");
-        throw std::invalid_argument(err_feedback);
-    }
+	else
+	{
+		err_feedback = ERR_NOTREGISTERED;
+		if (send(cArgs.client->getFD(), err_feedback.c_str(), err_feedback.length(), 0) == -1)
+			throw std::runtime_error("send() failed");
+		throw std::invalid_argument(err_feedback);
+	}
 }
 
 int	Server::findClient(std::string nickname)
@@ -77,17 +68,17 @@ int	Server::findClient(std::string nickname)
 
 void	Server::doPrivateMsg(Client & client, std::vector<std::string> nick, std::string msg)
 {
-	std::map<std::string, Channel>::iterator ite2;
-	int fd;
-	std::string feedback;
-	if (msg.empty()) // pas utile ?
+	std::map<std::string, Channel>::iterator	ite2;
+	int			fd;
+	std::string	feedback;
+
+	if (msg.empty())
 	{
 		feedback = NO_TEXTOSEND(client.getNickname());
 		if (send(client.getFD(), feedback.c_str(), feedback.length(), 0) == -1)
 			throw std::runtime_error("send() failed");
 		return ;
 	}
-
 	for(size_t i = 0; i < nick.size(); i++)
 	{
 		fd = findClient(nick[i]);
@@ -104,15 +95,11 @@ void	Server::doPrivateMsg(Client & client, std::vector<std::string> nick, std::s
 		}
 		else if (ite2 != _channels.end())
 		{
-			std::cout << "J'ESSAIE D'ENVOYER UN MESSAGE DANS UN CHANNEL" << std::endl;
-
-			std::string index = (*ite2).first;
-			std::map<std::string, Client> tmp;
+			std::string	index = (*ite2).first;
+			std::map<std::string, Client>	tmp;
 			tmp = _channels[index].getConnectedClients();
 			if (client.isInChan(nick[i]))
 			{
-				std::cout << "JE SUIS BIEN DANS LE CHANNEL DONC JE PEUX" << std::endl;
-
 				std::map<std::string, Client>::iterator ite = tmp.begin();
 				for (; ite != tmp.end(); ++ite)
 				{

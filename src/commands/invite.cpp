@@ -51,7 +51,6 @@ void	Server::doInvite(Client & client, std::string const & target, std::string c
 	feedback = INVITE(client.getNickname(), client.getUserinfo().username, target, chan);
 	if (send(findClient(target), feedback.c_str(), feedback.length(), 0) == -1)
 		throw std::runtime_error("send() failed");
-
 }
 
 void	Server::invite(t_commandArgs & cArgs)
@@ -64,7 +63,6 @@ void	Server::invite(t_commandArgs & cArgs)
 
 	while (*cArgs.sstream >> words)
 	{
-		std::cout << "words :" << words << std::endl;
 		if (sscount == 0)
 			target = words;
 		else if (sscount == 1)
@@ -74,7 +72,7 @@ void	Server::invite(t_commandArgs & cArgs)
 				err_feedback = ERR_BADCHANMASK(cArgs.client->getNickname(), words);
 				if (send(cArgs.client->getFD(), err_feedback.c_str(), err_feedback.length(), 0) == -1)
 					throw std::runtime_error("send() failed");
-                throw std::invalid_argument("Error: channel name has to start with #.");
+				throw std::invalid_argument("Error: channel name has to start with #.");
 			}
 			channel = words;
 		}
@@ -91,11 +89,11 @@ void	Server::invite(t_commandArgs & cArgs)
 	}
 	if (cArgs.client->isAuth())
 		doInvite(*cArgs.client, target, channel);
-    else
-    {
-        err_feedback = ERR_NOTREGISTERED;
-        if (send(cArgs.client->getFD(), err_feedback.c_str(), err_feedback.length(), 0) == -1)
-            throw std::runtime_error("send() failed");
-        throw std::invalid_argument(err_feedback);
-    }
+	else
+	{
+		err_feedback = ERR_NOTREGISTERED;
+		if (send(cArgs.client->getFD(), err_feedback.c_str(), err_feedback.length(), 0) == -1)
+			throw std::runtime_error("send() failed");
+		throw std::invalid_argument(err_feedback);
+	}
 }

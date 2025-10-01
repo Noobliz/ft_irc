@@ -1,10 +1,10 @@
 #include <Server.hpp>
 
-
-void    Server::bot(t_commandArgs & cArgs)
+void	Server::bot(t_commandArgs & cArgs)
 {
-    int fd = findClient("beautyBot");
-    std::map<int, Client>::iterator iteBot = _clients.find(fd);
-    if (iteBot != _clients.end())
-        sendMsg("activation " + (cArgs).client->getNickname(), fd);
+	int fd = findClient("beautyBot");
+	std::map<int, Client>::iterator iteBot = _clients.find(fd);
+
+	if (iteBot != _clients.end())
+		sendMsg("activation " + (cArgs).client->getNickname(), fd);
 }

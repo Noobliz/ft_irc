@@ -2,9 +2,9 @@
 
 static void	showModes(std::map<std::string, Channel>::iterator & currentChannelIt, t_commandArgs & cArgs)
 {
-	std::string modestring = "+";
-	std::string mode_arguments = "";
-	std::string feedback = "";
+	std::string	modestring = "+";
+	std::string	mode_arguments = "";
+	std::string	feedback = "";
 
 	if (currentChannelIt->second.isInInviteMode())
 		modestring += "i";
@@ -27,6 +27,7 @@ static void	showModes(std::map<std::string, Channel>::iterator & currentChannelI
 		mode_arguments += convert.str() + " ";
 	}
 	std::map<std::string, Client>::const_iterator it = currentChannelIt->second.getOperators().begin();
+
 	if (it != currentChannelIt->second.getOperators().end())
 	{
 		modestring += "o";
@@ -34,19 +35,20 @@ static void	showModes(std::map<std::string, Channel>::iterator & currentChannelI
 			mode_arguments += it->second.getNickname() + ",";
 		mode_arguments = mode_arguments.substr(0, mode_arguments.size() - 1);
 	}
+
 	feedback = RPL_CHANNELMODEIS(cArgs.client->getNickname(), currentChannelIt->first, modestring, mode_arguments);
 	if (send(cArgs.client->getFD(), feedback.c_str(), feedback.length(), 0) == -1)
 		throw std::runtime_error("send() failed");
 }
 
-static void	mode_I(bool activate, std::map<std::string, Channel>::iterator & currentChannelIt)
+static void	mode_I(bool activate, std::map<std::string, Channel>::iterator & currentChannelIt, t_commandArgs & cArgs)
 {
-	std::string feedback;
+	std::string	feedback;
 
 	if (activate)
 	{
 		currentChannelIt->second.setInviteMode(true);
-		feedback = RPL_MODECHANGED1(currentChannelIt->first, "+i");
+		feedback = RPL_MODECHANGED1(cArgs.client->getNickname(), currentChannelIt->first, "+i");
 		for(std::map<std::string, Client>::iterator it = currentChannelIt->second.getConnectedClients().begin();
 			it != currentChannelIt->second.getConnectedClients().end(); ++it)
 		{
@@ -57,7 +59,7 @@ static void	mode_I(bool activate, std::map<std::string, Channel>::iterator & cur
 	else
 	{
 		currentChannelIt->second.setInviteMode(false);
-		feedback = RPL_MODECHANGED1(currentChannelIt->first, "-i");
+		feedback = RPL_MODECHANGED1(cArgs.client->getNickname(), currentChannelIt->first, "-i");
 		for(std::map<std::string, Client>::iterator it = currentChannelIt->second.getConnectedClients().begin();
 			it != currentChannelIt->second.getConnectedClients().end(); ++it)
 		{
@@ -67,14 +69,14 @@ static void	mode_I(bool activate, std::map<std::string, Channel>::iterator & cur
 	}
 }
 
-static void	mode_T(bool activate, std::map<std::string, Channel>::iterator & currentChannelIt)
+static void	mode_T(bool activate, std::map<std::string, Channel>::iterator & currentChannelIt, t_commandArgs & cArgs)
 {
-	std::string feedback;
+	std::string	feedback;
 
 	if (activate)
 	{
 		currentChannelIt->second.setTopicForAll(true);
-		feedback = RPL_MODECHANGED1(currentChannelIt->first, "+t");
+		feedback = RPL_MODECHANGED1(cArgs.client->getNickname(), currentChannelIt->first, "+t");
 		for(std::map<std::string, Client>::iterator it = currentChannelIt->second.getConnectedClients().begin();
 			it != currentChannelIt->second.getConnectedClients().end(); ++it)
 		{
@@ -85,7 +87,7 @@ static void	mode_T(bool activate, std::map<std::string, Channel>::iterator & cur
 	else
 	{
 		currentChannelIt->second.setTopicForAll(false);
-		feedback = RPL_MODECHANGED1(currentChannelIt->first, "-t");
+		feedback = RPL_MODECHANGED1(cArgs.client->getNickname(), currentChannelIt->first, "-t");
 		for(std::map<std::string, Client>::iterator it = currentChannelIt->second.getConnectedClients().begin();
 			it != currentChannelIt->second.getConnectedClients().end(); ++it)
 		{
@@ -97,15 +99,15 @@ static void	mode_T(bool activate, std::map<std::string, Channel>::iterator & cur
 
 static void	mode_K(bool activate, std::map<std::string, Channel>::iterator & currentChannelIt, t_commandArgs & cArgs)
 {
-	std::string feedback;
-	std::string args;
+	std::string	feedback;
+	std::string	args;
 
 	if (activate)
 	{
 		if (*cArgs.sstream >> args) //? if there is an argument left in the stringstream
 		{
 			currentChannelIt->second.setPassword(args);
-			feedback = RPL_MODECHANGED2(currentChannelIt->first, "+k", args);
+			feedback = RPL_MODECHANGED2(cArgs.client->getNickname(), currentChannelIt->first, "+k", args);
 			for(std::map<std::string, Client>::iterator it = currentChannelIt->second.getConnectedClients().begin();
 				it != currentChannelIt->second.getConnectedClients().end(); ++it)
 			{
@@ -113,15 +115,12 @@ static void	mode_K(bool activate, std::map<std::string, Channel>::iterator & cur
 					throw std::runtime_error("send() failed");
 			}
 		}
-		else
-		{
-			;//? server has to ignore if no argument is given.
-		}
+		//? server has to ignore if no argument is given.
 	}
 	else
 	{
 		currentChannelIt->second.setPassword("");
-		feedback = RPL_MODECHANGED1(currentChannelIt->first, "-k");
+		feedback = RPL_MODECHANGED1(cArgs.client->getNickname(), currentChannelIt->first, "-k");
 		for(std::map<std::string, Client>::iterator it = currentChannelIt->second.getConnectedClients().begin();
 			it != currentChannelIt->second.getConnectedClients().end(); ++it)
 		{
@@ -133,8 +132,8 @@ static void	mode_K(bool activate, std::map<std::string, Channel>::iterator & cur
 
 static void	mode_O(bool activate, std::map<std::string, Channel>::iterator & currentChannelIt, t_commandArgs & cArgs)
 {
-	std::string feedback;
-	std::string args;
+	std::string	feedback;
+	std::string	args;
 
 	if (*cArgs.sstream >> args) //? if there is an argument left in the stringstream
 	{
@@ -145,7 +144,7 @@ static void	mode_O(bool activate, std::map<std::string, Channel>::iterator & cur
 			if (activate)
 			{
 				currentChannelIt->second.addOperator(target->second);
-				feedback = RPL_MODECHANGED2(currentChannelIt->first, "+o", args);
+				feedback = RPL_MODECHANGED2(cArgs.client->getNickname(), currentChannelIt->first, "+o", args);
 				for(std::map<std::string, Client>::iterator it = currentChannelIt->second.getConnectedClients().begin();
 					it != currentChannelIt->second.getConnectedClients().end(); ++it)
 				{
@@ -156,7 +155,7 @@ static void	mode_O(bool activate, std::map<std::string, Channel>::iterator & cur
 			else
 			{
 				currentChannelIt->second.removeOperator(target->second);
-				feedback = RPL_MODECHANGED2(currentChannelIt->first, "-o", args);
+				feedback = RPL_MODECHANGED2(cArgs.client->getNickname(), currentChannelIt->first, "-o", args);
 				for(std::map<std::string, Client>::iterator it = currentChannelIt->second.getConnectedClients().begin();
 					it != currentChannelIt->second.getConnectedClients().end(); ++it)
 				{
@@ -172,10 +171,7 @@ static void	mode_O(bool activate, std::map<std::string, Channel>::iterator & cur
 				throw std::runtime_error("send() failed");
 		}
 	}
-	else
-	{
-		;//? server has to ignore if no argument is given.
-	}
+	//? server has to ignore if no argument is given.
 }
 
 static void	mode_L(bool activate, std::map<std::string, Channel>::iterator & currentChannelIt, t_commandArgs & cArgs)
@@ -187,15 +183,14 @@ static void	mode_L(bool activate, std::map<std::string, Channel>::iterator & cur
 	{
 		if (*cArgs.sstream >> args) //? if there is an argument left in the stringstream
 		{
-			int limit;
-			errno = 0;
-			char *end = NULL;
+			int		limit;
+			char	*end = NULL;
 
 			limit = std::strtol(args.c_str(), &end, 10); //? converts to int
 			if (*end == '\0' || errno == ERANGE || limit > MAX_CLIENT)
 			{
 				currentChannelIt->second.setUserLimit(limit);
-				feedback = RPL_MODECHANGED2(currentChannelIt->first, "+l", args);
+				feedback = RPL_MODECHANGED2(cArgs.client->getNickname(), currentChannelIt->first, "+l", args);
 				for(std::map<std::string, Client>::iterator it = currentChannelIt->second.getConnectedClients().begin();
 					it != currentChannelIt->second.getConnectedClients().end(); ++it)
 				{
@@ -204,15 +199,12 @@ static void	mode_L(bool activate, std::map<std::string, Channel>::iterator & cur
 				}
 			}
 		}
-		else
-		{
-			;//? server has to ignore if no argument is given.
-		}
+		//? server has to ignore if no argument is given.
 	}
 	else
 	{
 		currentChannelIt->second.setUserLimit(-1);
-		feedback = RPL_MODECHANGED1(currentChannelIt->first, "-l");
+		feedback = RPL_MODECHANGED1(cArgs.client->getNickname(), currentChannelIt->first, "-l");
 		for(std::map<std::string, Client>::iterator it = currentChannelIt->second.getConnectedClients().begin();
 			it != currentChannelIt->second.getConnectedClients().end(); ++it)
 		{
@@ -227,27 +219,26 @@ void	Server::mode(t_commandArgs & cArgs)
 	std::string	word;
 	std::string	args;
 	std::string	feedback;
-	bool		activate = true; //? + or -
-	bool		hasSign = false; //? if a + or - has been found
-	int			sscount = 0; //? number of stringstream done on the command
+	bool		activate = true;	//? + or -
+	bool		hasSign = false;	//? if a + or - has been found
+	int			sscount = 0;		//? number of stringstream done on the command
 	std::map<std::string, Channel>::iterator	currentChannelIt; //? the iterator pointing at the targetted channel
 
-	//?Check if User is authentified
+	//? Check if User is authentified
 	if (!cArgs.client->isAuth())
 	{
-        feedback = ERR_NOTREGISTERED;
-        if (send(cArgs.client->getFD(), feedback.c_str(), feedback.length(), 0) == -1)
-            throw std::runtime_error("send() failed");
-        throw std::invalid_argument(feedback);
+		feedback = ERR_NOTREGISTERED;
+		if (send(cArgs.client->getFD(), feedback.c_str(), feedback.length(), 0) == -1)
+			throw std::runtime_error("send() failed");
+		throw std::invalid_argument(feedback);
 	}
 	while (*cArgs.sstream >> word)
 	{
 		//? Case MODE #channel (...)
-		//! merci Tim, par contre euh pourquoi il envoie un feedback de con ?
 		if (sscount == 0)
 		{
 			currentChannelIt = _channels.find(word);
-			//?Check if channel exists
+			//? Check if channel exists
 			if (word[0] != '#' || currentChannelIt == _channels.end())
 			{
 				feedback = ERR_NOSUCHCHANNEL(cArgs.client->getNickname(), word);
@@ -255,7 +246,6 @@ void	Server::mode(t_commandArgs & cArgs)
 					throw std::runtime_error("send() failed");
 				throw std::invalid_argument(feedback);
 			}
-
 		}
 		//? Case MODE #channel <modes>
 		else if (sscount == 1)
@@ -281,9 +271,9 @@ void	Server::mode(t_commandArgs & cArgs)
 					activate = false;
 				}
 				else if (word[i] == 'i' && hasSign)
-					mode_I(activate, currentChannelIt);
+					mode_I(activate, currentChannelIt, cArgs);
 				else if (word[i] == 't' && hasSign)
-					mode_T(activate, currentChannelIt);
+					mode_T(activate, currentChannelIt, cArgs);
 				else if (word[i] == 'k' && hasSign)
 					mode_K(activate, currentChannelIt, cArgs);
 				else if (word[i] == 'o' && hasSign)

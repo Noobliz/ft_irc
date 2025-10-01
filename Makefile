@@ -1,7 +1,7 @@
 CXX = c++
 CXXFLAGS = -Wall -Wextra -Werror -std=c++98 -g
 
-NAME = ircserv
+NAME	= ircserv
 
 SRC =	main.cpp					\
 		src/Server.cpp				\
@@ -21,7 +21,6 @@ SRC =	main.cpp					\
 		src/commands/quit.cpp		\
 		src/commands/bot.cpp		\
 
-
 OBJDIR = .obj/
 OBJ = $(addprefix $(OBJDIR),$(SRC:.cpp=.o))
 
@@ -34,12 +33,17 @@ $(OBJDIR)%.o : %.cpp
 	@mkdir -p $(@D)
 	$(CXX) $(CXXFLAGS) -c $< -Iinc -o $@
 
+bot :
+	make -C bot
+
 clean :
 	rm -rf $(OBJDIR)
+	rm -rf bot/.obj
 
 fclean : clean
 	rm -f $(NAME)
+	rm -f bot/beautyBot
 
 re : fclean all
 
-.PHONY : re clean fclean all
+.PHONY : re clean fclean all bot

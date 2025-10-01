@@ -57,8 +57,3 @@ il faut que tout le monde le recoive
 
 ca c'est que pour le client qui join le chan
 >> :Armida.german-elite.net 353 rick1234 = #chan1 :rick1234!~oser1234@GE-9042C255.unyc.it @nick1234!~user1234@GE-9042C255.unyc.it
-
- ____________________________________
-/									 \
-| !!!! faire les messages de welcome |
-\____________________________________/

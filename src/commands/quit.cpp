@@ -1,6 +1,5 @@
 #include <Server.hpp>
 
-
 void	Server::doQuit(Client & client, std::string msg)
 {
 	std::string	feedback;
@@ -30,27 +29,23 @@ void	Server::doQuit(Client & client, std::string msg)
 			}
 		}
 	}
-
-
 	int	tmpfd = client.getFD();
 	if (epoll_ctl(_epollfd, EPOLL_CTL_DEL, client.getFD(), NULL) == -1)
 		throw std::invalid_argument("Error: epoll_ctl fail");
 	_clients.erase(client.getFD());
 	close(tmpfd);
-	//! quitter proprement le client du server (epoll ctl + close client fd)
 }
 
 void	Server::quit(t_commandArgs & cArgs)
 {
 	std::streampos	ssPos;
-	std::string	msg;
-	std::string	words;
-	std::string	err_feedback;
-	int	sscount = 0;
+	std::string		msg;
+	std::string		words;
+	std::string		err_feedback;
+	int				sscount = 0;
 
 	while (*cArgs.sstream >> words)
 	{
-		std::cout << "words :" << words << std::endl;
 		if (sscount == 0)
 		{
 			if (words[0] == ':')

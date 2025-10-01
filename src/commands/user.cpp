@@ -10,7 +10,6 @@ void	Server::user(t_commandArgs & cArgs)
 
 	while (*cArgs.sstream >> words)
 	{
-		std::cout << "words :" << words << std::endl;
 		if (sscount == 0)
 			userinfos.username = words;
 		else if (sscount == 1)

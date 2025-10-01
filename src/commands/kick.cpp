@@ -14,7 +14,6 @@ void	Server::kick(t_commandArgs & cArgs)
 
 	while (*cArgs.sstream >> words)
 	{
-		std::cout << "words :" << words << std::endl;
 		if (sscount == 0)
 		{
 			if (words[0] != '#')
@@ -59,14 +58,7 @@ void	Server::kick(t_commandArgs & cArgs)
 			throw std::runtime_error("send() failed");
 		throw std::invalid_argument("Error: not enough arguments.");
 	}
-	std::cout << "Debug infos:" << std::endl;
-	std::cout << "Channel:" << channel << std::endl;
-	for (std::vector<std::string>::iterator it = targets.begin(); it != targets.end(); ++it)
-	{
-		std::cout << "Target:" << *it << std::endl;
-	}
-	std::cout << "Msg:" << msg << std::endl;
-	std::cout << std::endl;
+
 	if (cArgs.client->isAuth())
 		doKick(*cArgs.client, targets, channel, msg);
 	else
@@ -108,7 +100,6 @@ void	Server::doKick(Client & client, std::vector<std::string> const &target, std
 		throw std::invalid_argument("Error: client has not enough privileges");
 	}
 
-	//CASE OF ERROR DO WE THROW OR NOT ??
 	for(size_t i = 0; i < target.size(); i++)
 	{
 		int clientfd = findClient(target[i]);
@@ -136,7 +127,6 @@ void	Server::doKick(Client & client, std::vector<std::string> const &target, std
 			if (send(ite2->second.getFD(), feedback.c_str(), feedback.length(), 0) == -1)
 				throw std::runtime_error("send() failed");
 		}
-		//rm user from chan and chan from users
 		_clients[clientfd].removeChan(chan);
 		iteChan->second.removeClient(target[i]);
 		if (iteChan->second.getConnectedClients().size() == 0)

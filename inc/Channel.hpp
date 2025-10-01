@@ -15,7 +15,6 @@ class Channel
 		Channel	&operator=(Channel const & other);
 		~Channel();
 
-		//? attention, le client qui construit la class Channel doit etre operateur
 		Channel(Client & client, std::string name, std::string pass);
 
 		bool		checkPassword(std::string const & pass);
@@ -38,21 +37,21 @@ class Channel
 		int			getUserLimit(void) const;
 		void		setUserLimit(int const & ul);
 
-		//? j'ai besoin pour join, d'un addclient pour chacune des maps string/Client
-		void		addClient(Client & client); //! attention: verifier si invité.
+		void		addClient(Client & client);
 		void		addOperator(Client & client);
-		void		removeOperator(Client & client);
 		void		inviteClient(Client & client);
-
-		std::map<std::string, Client>	&getConnectedClients();
-		std::map<std::string, Client>	&getOperators();
-		std::map<std::string, Client>	&getInvitedClient();
 
 		bool		isInvited(Client & client) const;
 		bool		isFull(void) const;
 		bool		isOperator(Client & client) const;
-		void		removeInvited(Client & client);
+
 		void		removeClient(std::string const & nick);
+		void		removeInvited(Client & client);
+		void		removeOperator(Client & client);
+
+		std::map<std::string, Client>	&getConnectedClients();
+		std::map<std::string, Client>	&getOperators();
+		std::map<std::string, Client>	&getInvitedClient();
 
 	private:
 
@@ -63,14 +62,7 @@ class Channel
 		std::string	_password;
 		int			_userLimit;
 
-		//? liste des clients connectés
 		std::map<std::string, Client>	_connectedClients;
-
-		//? liste des clients invités
 		std::map<std::string, Client>	_invitedClients;
-
-		//? liste des clients operateurs
 		std::map<std::string, Client>	_chanOperators;
-
-
 };
