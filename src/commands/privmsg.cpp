@@ -27,12 +27,10 @@ void	Server::privmsg(t_commandArgs & cArgs)
 				std::stringstream msgSStream(msg);
 				std::getline(msgSStream, msg, ':');
 				std::getline(msgSStream, msg);
-				msg.append("\n");
 				sscount++;
 				break;
 			}
 			msg = words;
-			msg.append("\n");
 		}
 		else if(sscount > 1)
 			throw std::invalid_argument("Error: too many arguments.");

@@ -27,12 +27,10 @@ void	Server::user(t_commandArgs & cArgs)
 				std::stringstream msgSStream(userinfos.realname);
 				std::getline(msgSStream, userinfos.realname, ':');
 				std::getline(msgSStream, userinfos.realname);
-				userinfos.realname.append("\n");
 				sscount++;
 				break;
 			}
 			userinfos.realname = words;
-			userinfos.realname.append("\n");
 		}
 		else if(sscount > 3)
 		{
