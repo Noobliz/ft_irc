@@ -5,6 +5,10 @@
 #include <stdexcept>
 #include <cstdlib>
 #include <unistd.h>
+#include <sstream>
+#include <ctime> 
+#include <csignal> 
+#include <fcntl.h>
 
 class Bot
 {
@@ -14,16 +18,19 @@ class Bot
 		//void	init(int port, const std::string &nick);
 		void	connectToServ();
 		void	run();
+		std::string 	getRandomMessage() const;
+		void	sendBack(std::string concatstr);
 		Bot(int port, const std::string &pass);
+		~Bot();
 
 	private:
+		Bot();
+		Bot(Bot const & copy);
+		Bot	&operator=(Bot const & other);
+
 		int						_sockFd;
 		struct sockaddr_in		_servAddr;
 		uint16_t				_port;
 		std::string				_password;
 		std::string				_nickname;
-		std::list<std::string>	_oldChans;
-		std::list<std::string>	_newChans;
-
-
 };
